@@ -12,17 +12,21 @@ from restServer import RestServer
 
 # debug logger instance
 debugLevel = logging.DEBUG
-logger = logging.getLogger( "mainLogger" )
+logger = logging.getLogger( __name__ )
 logHandler = logging.StreamHandler()
+logFormat = logging.Formatter( "%(name)s - %(levelname)s - %(message)s" )
+logHandler.setFormatter( logFormat )
 logger.addHandler( logHandler )
 logger.setLevel( debugLevel )
 
 def main() :
+    # main function
     confBox = ConfigurationManager()
-    #restServer = RestServer( confBox.getRestServerAddress(), confBox.getRestServerPort() )
+    restServer = RestServer( confBox.getRestServerAddress(), confBox.getRestServerPort() )
+    restServer.run()
 
 
 if __name__ == "__main__" :
-    logger.debug( " " + __file__ + " : starting ... " )
+    logger.debug( "starting ... " )
     main()
-    logger.debug( " " + __file__ + " : ... end " )
+    logger.debug( "... end " )

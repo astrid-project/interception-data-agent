@@ -5,37 +5,61 @@ developed by @Infocom - 2020
 info: guerino.lamanna@infocomgenova.it
 """
 
-from flask import Flask, request
-from flask_restful import Resource, Api
-from flask_api import status
+from http.server import HTTPServer, BaseHTTPRequestHandler
+import socketserver
 import json
 import logging
 
 from polycubeHandler import PolycubeHandler
 
-logger = logging.getLogger( "mainLogger" )
+logger = logging.getLogger( __name__ )
 polycubeHandler = PolycubeHandler()
 
-class InterceptionStart( Resource ) :
+class restServerHandler( BaseHTTPRequestHandler ) :
+    #def __init__( self ) :
+    #    return None
+
+    def _set_headers( self ) :
+        self.send_response( 200 ) 
+        self.send_header( "Content-type", "text/json" )
+        self.end_headers()
+
+    def do_GET( self ) :
+        self._set_headers()
+        return
+
+    def do_HEAD( self ) :
+        self._set_headers()
+        return
+    
+    def do_POST( self ) :
+        self._set_headers()
+        if self.path == "/interceptionstart" :
+            logger.debug( "POST request : interception start" )
+            None
+        if self.path == "/interceptionstop" :
+            logger.debug( "POST request : interception stop" )
+            None
+        return
+
+class InterceptionStart() :
     def __init__( self ) :
         return None
 
     def get( self ) :
         logger.debug( __file__ + " get " )
         result = {}
-        return json.dumps( result ), status.HTTP_200_OK
+        return json.dumps( result ) #, status.HTTP_200_OK
 
     def post( self ) :
         logger.debug( __file__ + " post " )
-        requestJson = request.get_json()
+        requestJson = None #request.get_json()
 
         userID = requestJson.get( "userID", "")
         serviceProviderID = requestJson.get( "serviceProviderID", "")
         serviceID = requestJson.get( "serviceID", "")
 
         logger.debug( json.dumps( requestJson ) )
-        logger.debug( "userID={} , serviceProviderID={} , serviceID={} " \
-        % ( userID, serviceProviderID, serviceID ) )
 
         if userID != "" and serviceProviderID != "" and serviceID != "" : 
             # RETRIVE INFORMATION (IP, PORT of USERID)
@@ -47,29 +71,28 @@ class InterceptionStart( Resource ) :
         
         result = {}
         if boolResult :
-            return json.dumps( result ), status.HTTP_200_OK
+            return json.dumps( result ) #, status.HTTP_200_OK
         else :
-            return json.dumps( result ), status.HTTP_500_INTERNAL_SERVER_ERROR
+            return json.dumps( result ) #, status.HTTP_500_INTERNAL_SERVER_ERROR
 
-class InterceptionStop( Resource ) :
+class InterceptionStop() :
     def __init__( self ) :
         return None
 
     def get( self ) :
         logger.debug( __file__ + " get " )
         result = {}
-        return json.dumps( result ), status.HTTP_200_OK
+        return json.dumps( result ) #, status.HTTP_200_OK
 
     def post( self ) :
         logger.debug( __file__ + " post " )
-        requestJson = request.get_json()
+        requestJson = None #request.get_json()
 
         userID = requestJson.get( "userID", "")
         serviceProviderID = requestJson.get( "serviceProviderID", "")
         serviceID = requestJson.get( "serviceID", "")
 
-        logger.debug( "userID={} , serviceProviderID={} , serviceID={} " \
-        % ( userID, serviceProviderID, serviceID ) )
+        logger.debug( json.dumps( requestJson ) )
 
         if userID != "" and serviceProviderID != "" and serviceID != "" : 
             # STOP PACKET CAPTURE
@@ -79,19 +102,21 @@ class InterceptionStop( Resource ) :
 
         result = {}
         if boolResult :
-            return json.dumps( result ), status.HTTP_200_OK
+            return json.dumps( result ) #, status.HTTP_200_OK
         else :
-            return json.dumps( result ), status.HTTP_500_INTERNAL_SERVER_ERROR
+            return json.dumps( result ) #, status.HTTP_500_INTERNAL_SERVER_ERROR
 
 class RestServer():
     def __init__( self, address, port ):
-        self.app = Flask( __name__ )
-        self.api = Api( self.app )
-        self.api.add_resource( InterceptionStart, "/interceptionstart" )
-        self.api.add_resource( InterceptionStop, "/interceptionstop" )
-        # "threaded = True" is used to multi-thread parallel requests managing
-        #self.app.run( host=address, port=port, threaded = True )
-        self.app.run( host=address, port=port )
+        self.address = address
+        self.port = port
+        self.handler = restServerHandler
+        return None
+    
+    def run( self ) :
+        with socketserver.TCPServer( ( self.address, self.port ), self.handler ) as httpd:
+            logger.debug( "web server started" )
+            httpd.serve_forever()
         
         return None
 

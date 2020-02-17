@@ -11,7 +11,7 @@ from polycubeAPI import PolycubeAPI
 
 # debug logger instance
 debugLevel = logging.DEBUG
-logger = logging.getLogger( "mainLogger" )
+logger = logging.getLogger( __name__ )
 logHandler = logging.StreamHandler()
 logger.addHandler( logHandler )
 logger.setLevel( debugLevel )

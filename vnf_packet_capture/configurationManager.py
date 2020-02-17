@@ -27,7 +27,7 @@ class ConfigurationManager():
             configFileName = "configurationFile.conf",
             configFilePath = "./" 
         ):
-        self.logger = logging.getLogger( "mainLogger" )
+        self.logger = logging.getLogger( __name__ )
         self.configFileName = configFileName
         self.configFilePath = configFilePath
         self.jsonDictionary = {}
