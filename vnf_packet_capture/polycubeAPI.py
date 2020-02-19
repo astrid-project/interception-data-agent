@@ -102,8 +102,8 @@ class PolycubeAPI() :
         return False
 
     def delPacketCapture( self, packetCapturename ) :
-        delPacketCaptureEndpoint = self.polycubeURL + packetCapturename
-        logger.debug( delPacketCaptureEndpont )
+        delPacketCaptureEndpoint = self.polycubeURL + "packetcapture/" + packetCapturename
+        logger.debug( delPacketCaptureEndpoint )
         response = requests.delete( delPacketCaptureEndpoint )
         if response.status_code == 200 :
             return True
