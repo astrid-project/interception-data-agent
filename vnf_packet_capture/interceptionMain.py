@@ -12,7 +12,8 @@ from restServer import RestServer
 
 # debug logger instance
 debugLevel = logging.DEBUG
-logger = logging.getLogger( __name__ )
+#logger = logging.getLogger( __name__ )
+logger = logging.getLogger( "mainLogger" )
 logHandler = logging.StreamHandler()
 logFormat = logging.Formatter( "%(name)s - %(levelname)s - %(message)s" )
 logHandler.setFormatter( logFormat )

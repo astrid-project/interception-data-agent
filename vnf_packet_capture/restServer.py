@@ -12,7 +12,8 @@ import logging
 
 from polycubeHandler import PolycubeHandler
 
-logger = logging.getLogger( __name__ )
+#logger = logging.getLogger( __name__ )
+logger = logging.getLogger( "mainLogger" )
 polycubeHandler = PolycubeHandler()
 
 class restServerHandler( BaseHTTPRequestHandler ) :
@@ -33,14 +34,28 @@ class restServerHandler( BaseHTTPRequestHandler ) :
         return
     
     def do_POST( self ) :
+        response = {} # response
         self._set_headers()
+        requestMessageLength = int( self.headers.get( 'content-length' ) )
+        requestMessage = ""
+        requestJson = {}
+        logger.debug( "request message length: %i", requestMessageLength )
+        if requestMessageLength > 0 :
+            requestMessage = self.rfile.read( requestMessageLength ).decode( "utf-8" )
+            requestJson = json.loads( requestMessage ) if requestMessage else {}
+            logger.debug( json.dumps( requestJson ) )
+        
+        # /interceptionstart
         if self.path == "/interceptionstart" :
             logger.debug( "POST request : interception start" )
             None
+        
+        # /interceptionstop
         if self.path == "/interceptionstop" :
             logger.debug( "POST request : interception stop" )
             None
-        return
+
+        self.wfile.write( bytes( json.dumps( response ), "utf-8" ) )
 
 class InterceptionStart() :
     def __init__( self ) :
