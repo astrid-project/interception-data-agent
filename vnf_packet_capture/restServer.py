@@ -41,6 +41,7 @@ class RestServerHandler( BaseHTTPRequestHandler ) :
         return
     
     def do_POST( self ) :
+        boolResult = False
         response = {} # response
         self._set_headers()
         requestMessageLength = int( self.headers.get( 'content-length' ) )
@@ -103,6 +104,7 @@ class RestServerHandler( BaseHTTPRequestHandler ) :
                 interceptionTask.stop()
 
         self.wfile.write( bytes( json.dumps( response ), "utf-8" ) )
+
 
 class RestServer():
     def __init__( self, restServerAddress, restServerPort,
