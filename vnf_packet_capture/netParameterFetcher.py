@@ -15,10 +15,10 @@ logger.addHandler( logHandler )
 logger.setLevel( debugLevel )
 
 class NetParameterFetcher() :
-    def __init__ () :
-        logger.debug( "NetParamterFetcher object initialization" )
+    def __init__ ( self ) :
+        logger.debug( "NetParameterFetcher object initialization" )
     
-    def dataFetcher( userID, serviceProviderID, serviceID ) :
+    def dataFetcher( self, userID, serviceProviderID, serviceID ) :
         """
         returns
         src IP address

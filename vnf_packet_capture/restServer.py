@@ -8,17 +8,24 @@ info: guerino.lamanna@infocomgenova.it
 from http.server import HTTPServer, BaseHTTPRequestHandler
 import socketserver
 import json
-import logging
 
-from polycubeHandler import PolycubeHandler
+from interceptionTask import InterceptionTask
+from myLogger import MyLogger
 
-#logger = logging.getLogger( __name__ )
-logger = logging.getLogger( "mainLogger" )
-polycubeHandler = PolycubeHandler()
-
-class restServerHandler( BaseHTTPRequestHandler ) :
-    #def __init__( self ) :
-    #    return None
+"""
+RestServerHandler
+::
+set "logger" variable
+"""
+class RestServerHandler( BaseHTTPRequestHandler ) :
+    interceptionTasks = {}
+    polycubeServerAddress = ""
+    polycubeServerPort = 0
+    interceptionInterfaceName = ""
+    logVoIPFilePath = ""
+    logVoIPFileName = ""
+    readVoIPLogTimeout = 0
+    logger = ""
 
     def _set_headers( self ) :
         self.send_response( 200 ) 
@@ -39,98 +46,86 @@ class restServerHandler( BaseHTTPRequestHandler ) :
         requestMessageLength = int( self.headers.get( 'content-length' ) )
         requestMessage = ""
         requestJson = {}
-        logger.debug( "request message length: %i", requestMessageLength )
+        RestServerHandler.logger.debug( "request message length: %i", requestMessageLength )
         if requestMessageLength > 0 :
             requestMessage = self.rfile.read( requestMessageLength ).decode( "utf-8" )
             requestJson = json.loads( requestMessage ) if requestMessage else {}
-            logger.debug( json.dumps( requestJson ) )
+            RestServerHandler.logger.debug( json.dumps( requestJson ) )
         
         # /interceptionstart
         if self.path == "/interceptionstart" :
-            logger.debug( "POST request : interception start" )
-            None
+            RestServerHandler.logger.debug( "POST request : interception start" )
+            if "userID" in requestJson :
+                userID = requestJson[ "userID" ]
+            else :
+                userID = ""
+            if "providerID" in requestJson : 
+                providerID = requestJson[ "providerID" ]
+            else :
+                providerID = ""
+            if "serviceID" in requestJson :
+                serviceID = requestJson[ "serviceID" ]
+            else :
+                serviceID = ""
+
+            interceptionName = str( serviceID ) + str( providerID ) + str( userID )
+            
+            if RestServerHandler.interceptionTasks.get( interceptionName, False ) :
+                RestServerHandler.logger.debug( "interception task yet exist !" )
+            else :
+                interceptionTask = InterceptionTask( userID, providerID, serviceID, 
+                    RestServerHandler.polycubeServerAddress, RestServerHandler.polycubeServerPort, 
+                    RestServerHandler.interceptionInterfaceName, RestServerHandler.logVoIPFilePath, 
+                    RestServerHandler.logVoIPFileName, RestServerHandler.readVoIPLogTimeout )
+                interceptionTask.start()
+                RestServerHandler.interceptionTasks[ interceptionName ] = interceptionTask
+                
         
         # /interceptionstop
         if self.path == "/interceptionstop" :
-            logger.debug( "POST request : interception stop" )
-            None
+            RestServerHandler.logger.debug( "POST request : interception stop" )
+            if "userID" in requestJson :
+                userID = requestJson[ "userID" ]
+            else :
+                userID = ""
+            if "providerID" in requestJson :
+                providerID = requestJson[ "providerID" ]
+            else :
+                providerID = ""
+            if "serviceID" in requestJson :
+                serviceID = requestJson[ "serviceID" ]
+            else :
+                serviceID = ""
+
+            interceptionName = str( serviceID ) + str( providerID ) + str( userID )
+            interceptionTask = RestServerHandler.interceptionTasks.pop( interceptionName, False )
+            if interceptionTask :
+                interceptionTask.stop()
 
         self.wfile.write( bytes( json.dumps( response ), "utf-8" ) )
 
-class InterceptionStart() :
-    def __init__( self ) :
-        return None
-
-    def get( self ) :
-        logger.debug( __file__ + " get " )
-        result = {}
-        return json.dumps( result ) #, status.HTTP_200_OK
-
-    def post( self ) :
-        logger.debug( __file__ + " post " )
-        requestJson = None #request.get_json()
-
-        userID = requestJson.get( "userID", "")
-        serviceProviderID = requestJson.get( "serviceProviderID", "")
-        serviceID = requestJson.get( "serviceID", "")
-
-        logger.debug( json.dumps( requestJson ) )
-
-        if userID != "" and serviceProviderID != "" and serviceID != "" : 
-            # RETRIVE INFORMATION (IP, PORT of USERID)
-            # to be done...
-            # START PACKET CAPTURE
-            logger.debug( "create packet capture" )
-            boolResult = polycubeHandler.interceptionStart( userID, serviceProviderID, serviceID, \
-                "0.0.0.0", 0, "0.0.0.0", 0, "", "enp0s3" )
-        
-        result = {}
-        if boolResult :
-            return json.dumps( result ) #, status.HTTP_200_OK
-        else :
-            return json.dumps( result ) #, status.HTTP_500_INTERNAL_SERVER_ERROR
-
-class InterceptionStop() :
-    def __init__( self ) :
-        return None
-
-    def get( self ) :
-        logger.debug( __file__ + " get " )
-        result = {}
-        return json.dumps( result ) #, status.HTTP_200_OK
-
-    def post( self ) :
-        logger.debug( __file__ + " post " )
-        requestJson = None #request.get_json()
-
-        userID = requestJson.get( "userID", "")
-        serviceProviderID = requestJson.get( "serviceProviderID", "")
-        serviceID = requestJson.get( "serviceID", "")
-
-        logger.debug( json.dumps( requestJson ) )
-
-        if userID != "" and serviceProviderID != "" and serviceID != "" : 
-            # STOP PACKET CAPTURE
-            boolResult = polycubeHandler.interceptionStop( userID, serviceProviderID, serviceID, 
-            "0.0.0.0", 0, "0.0.0.0", 0, "" )
-            logger.debug( "remove packet capture" )
-
-        result = {}
-        if boolResult :
-            return json.dumps( result ) #, status.HTTP_200_OK
-        else :
-            return json.dumps( result ) #, status.HTTP_500_INTERNAL_SERVER_ERROR
-
 class RestServer():
-    def __init__( self, address, port ):
-        self.address = address
-        self.port = port
-        self.handler = restServerHandler
+    def __init__( self, restServerAddress, restServerPort,
+        polycubeServerAddress, polycubeServerPort, interceptionInterfaceName,
+        logVoIPFilePath, logVoIPFileName, readVoIPLogTimeout ):
+        
+        myLogger = MyLogger()
+        self.logger = myLogger.getLogger( __name__ )
+        self.restServerAddress = restServerAddress
+        self.restServerPort = restServerPort
+        self.handler = RestServerHandler
+        RestServerHandler.polycubeServerAddress = polycubeServerAddress
+        RestServerHandler.polycubeServerPort = polycubeServerPort
+        RestServerHandler.interceptionInterfaceName = interceptionInterfaceName
+        RestServerHandler.logVoIPFilePath = logVoIPFilePath
+        RestServerHandler.logVoIPFileName = logVoIPFileName
+        RestServerHandler.readVoIPLogTimeout = readVoIPLogTimeout
+        RestServerHandler.logger = self.logger
         return None
     
     def run( self ) :
-        with socketserver.TCPServer( ( self.address, self.port ), self.handler ) as httpd:
-            logger.debug( "web server started" )
+        with socketserver.TCPServer( ( self.restServerAddress, self.restServerPort ), self.handler ) as httpd:
+            self.logger.debug( "web server started" )
             httpd.serve_forever()
         
         return None

@@ -24,16 +24,27 @@ class PolycubeHandler() :
     def interceptionStart( self, userID, providerID, serviceID, srcAddress, srcPort, dstAddress, dstPort, l4Proto, interfaceToAttachName ) :
         logger.debug( "interceptionStart" )
         packetCaptureName = str( serviceID ) + "." + str( providerID ) + "." + str( userID )
+
+        elem = self.packetCaptureList.get( packetCaptureName, False )
+        if elem : 
+            if elem == ( srcAddress, srcPort, dstAddress, dstPort ) :
+                logger.debug( "packetcapture already running for this request")
+                return True
+            else :
+                self.interceptionStop( userID, providerID, serviceID, srcAddress, srcPort,
+                    dstAddress, dstPort, l4Proto )
+
         self.polycubeAPI.createPacketCapture( packetCaptureName )
         self.polycubeAPI.attachPacketCapture( packetCaptureName, interfaceToAttachName )
-        self.packetCaptureList[ packetCaptureName ] = True
+
+        self.packetCaptureList[ packetCaptureName ] = ( srcAddress, srcPort, dstAddress, dstPort, l4Proto )
         return True
 
 
-    def interceptionStop( self, userID, providerID, serviceID, srcAddress, srcPort, dstAddress, dstPort, l4Proto ) :
+    def interceptionStop( self, userID, providerID, serviceID ) :
         logger.debug( "interceptionStop" )
         packetCaptureName = str( serviceID ) + "." + str( providerID ) + "." + str( userID )
-        if self.packetCaptureList.get( packetCaptureName, False ) :
+        if self.packetCaptureList.pop( packetCaptureName, False ) :
             self.polycubeAPI.delPacketCapture( packetCaptureName )
             return True
 
