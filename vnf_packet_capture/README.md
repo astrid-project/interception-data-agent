@@ -4,7 +4,7 @@ The code is used to retrieve information about VoIP (calls information and inter
 following of a LEA (Law Enforcement Agency) request. 
 The interception software makes use of SeVoC (VoIP) and Polycube PacketCapture.
 
-## TAble of Contents
+## Table of Contents
 - [Interception Data Agent]
 - [Architecture description]
 - [Installation]
@@ -14,11 +14,12 @@ The interception software makes use of SeVoC (VoIP) and Polycube PacketCapture.
 
 This code implements "INTERCEPTION" agent on the Virtual Network Function (VNF) side.
 
+```
        VNF          +        ContextBroker     +     SecurityController
                     |                          |
-|--------------|    |  |-------------|         |     |-----------------|
++--------------+    |  +-------------+         |     +-----------------+
 | LocalManager |    |  |    Kafka    |         |     |      IADMF      |
-|--------------|    |  |-------------|         |     |-----------------|
++--------------+    |  +-------------+         |     +-----------------+
                     |                          |
 |--------------|    |  |-------------|         |
 | INTERCEPTION |    |  |   Logstash  |         |
@@ -32,6 +33,7 @@ This code implements "INTERCEPTION" agent on the Virtual Network Function (VNF) 
 |   Polycube   |    |                          |
 |--------------|    |                          |
                     |                          | 
+```
 
 "INTERCEPTION" agent is composed by three modules:
 - a "REST SERVER" to receive request as "start interception"/"stop interception" with user-ID 
