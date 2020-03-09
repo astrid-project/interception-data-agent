@@ -37,6 +37,8 @@ class PolycubeHandler() :
 
         self.polycubeAPI.createPacketCapture( packetCaptureName )
         self.polycubeAPI.attachPacketCapture( packetCaptureName, interfaceToAttachName )
+        if srcAddress :
+            self.polycubeAPI.srcIPSetPacketCapture( packetCaptureName, srcAddress )
 
         self.packetCaptureList[ packetCaptureName ] = ( srcAddress, srcPort, dstAddress, dstPort, l4Proto )
         return True
