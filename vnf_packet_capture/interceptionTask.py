@@ -50,11 +50,18 @@ class InterceptionTask( threading.Thread ):
                     event = self.parsingHandler.changeInterceptedIPParameters()
                     if event != {} :
                         # parse event and get the data (srcAddress, etc)
-                        print( "TODO" )
-                        srcAddress = "0.0.0.0"
-                        srcPort = 0
-                        dstAddress = "0.0.0.0"
-                        dstPort = 0
+                        self.logger.debug( "catched event \"changeInterceptedIPParameter\" : " )
+                        self.logger.debug( "userID: %s / providerID : %s / serviceID : %s", 
+                            str( event.userID ), str( event.providerID ), str( event.serviceID ) )
+                        self.logger.debug( "srcAddress : %s / srcPort : %s ",
+                            str( event.srcAddress ), str( event.srcPort ) )
+                        self.logger.debug( "dstAddress : %s / dstPort : %s",
+                            str( event.dstAddress ), str( event.dstPort ) )
+
+                        srcAddress = event.srcAddress
+                        srcPort = event.srcPort
+                        dstAddress = event.dstAddress
+                        dstPort = event.dstPort
                         l4Proto = ""
                         
                         # - start/stop Polycube packetcapture, get from VoIP log parameters
@@ -63,7 +70,7 @@ class InterceptionTask( threading.Thread ):
                         
                         if self.interceptionHandler :
                             boolResult = self.interceptionHandler.interceptionStart( 
-                                self.userID, self.serviceProviderID, self.serviceID,
+                                self.userID, self.providerID, self.serviceID,
                                 srcAddress, srcPort, dstAddress, dstPort, l4Proto, 
                                 self.interceptionInterfaceName )
                         else :
@@ -82,7 +89,7 @@ class InterceptionTask( threading.Thread ):
            
             else :
                 # if not event, wait for a time
-                self.logger.debug( "sleep for: %s", str( self.readVoIPLogTimeout ) )
+                self.logger.warn( "sleep for: %s", str( self.readVoIPLogTimeout ) )
                 time.sleep( self.readVoIPLogTimeout )
 
         # When main thread is stopped, the Polycube Packetcapture is removed

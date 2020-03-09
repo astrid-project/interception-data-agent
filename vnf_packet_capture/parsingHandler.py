@@ -116,7 +116,7 @@ class ParsingHandler() :
                 userIP = elems[0]
                 self.logger.debug( " (2) User IP \"%s\" FOUND for User-ID \"%s\"", str( userIP ), str( self.userID ) )
                 event = Event( EventType.InterceptedIPParameters )
-                event.data[ "userIP" ] = userIP
+                event.data[ "srcAddress" ] = userIP
                 self.events.add( event )
                 return True
 
