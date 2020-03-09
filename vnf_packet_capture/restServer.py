@@ -91,8 +91,8 @@ class RestServerHandler( BaseHTTPRequestHandler ) :
                 userID = requestJson[ "userID" ]
             else :
                 userID = ""
-            if "providerID" in requestJson :
-                providerID = requestJson[ "providerID" ]
+            if "serviceProviderID" in requestJson :
+                providerID = requestJson[ "serviceProviderID" ]
             else :
                 providerID = ""
             if "serviceID" in requestJson :

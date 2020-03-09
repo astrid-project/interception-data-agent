@@ -25,6 +25,12 @@ class PolycubeHandler() :
         dstPort, l4Proto = None, interfaceToAttachName = None ) :
         logger.debug( "interceptionStart" )
         packetCaptureName = str( serviceID ) + "." + str( providerID ) + "." + str( userID )
+        logger.debug( "userID : %s, providerID : %s, serviceID : %s",
+            str( userID ), str( providerID ), str( serviceID ) )
+        logger.debug( "srcAddress : %s, srcPort : %s, dstAddress : %s",
+            str( srcAddress ), str( srcPort ), str( dstAddress ) )
+        logger.debug( "dstPort : %s, l4Proto : %s, interfaceToAttachName : %s", 
+            str( dstPort ), str( l4Proto ), str( interfaceToAttachName ) )
 
         elem = self.packetCaptureList.get( packetCaptureName, False )
         if elem : 
