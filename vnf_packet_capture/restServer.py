@@ -11,6 +11,7 @@ import json
 
 from interceptionTask import InterceptionTask
 from myLogger import MyLogger
+from configurationManager import InterceptionTool
 
 """
 RestServerHandler
@@ -26,6 +27,7 @@ class RestServerHandler( BaseHTTPRequestHandler ) :
     logVoIPFileName = ""
     readVoIPLogTimeout = 0
     logger = ""
+    interceptionTool = InterceptionTool.Undefined
 
     def _set_headers( self ) :
         self.send_response( 200 ) 

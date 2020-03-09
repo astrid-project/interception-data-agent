@@ -8,14 +8,18 @@ info: guerino.lamanna@infocomgenova.it
 import threading
 import time
 
+from enum import Enum
 from parsingHandler import ParsingHandler
 from polycubeHandler import PolycubeHandler
+from tcpdumpHandler import TcpdumpHandler
 from myLogger import MyLogger
+from configurationManager import InterceptionTool
 
 class InterceptionTask( threading.Thread ):
     def __init__( self, userID, providerID, serviceID,
     polycubeServerAddress, polycubeServerPort, interceptionInterfaceName, 
-    logVoIPFilePath = "./", logVoIPFileName = "file.log", readVoIPLogTimeout = 0.5 ):
+    logVoIPFilePath = "./", logVoIPFileName = "file.log", readVoIPLogTimeout = 0.5,
+    interceptionTool = InterceptionTool.PolycubePacketCapture ):
         myLogger = MyLogger()
         self.logger = myLogger.getLogger( __name__ )
         threading.Thread.__init__( self )
@@ -30,7 +34,12 @@ class InterceptionTask( threading.Thread ):
         self.parsingHandler = ParsingHandler( userID = self.userID, 
          providerID = self.providerID, serviceID = self.serviceID,
          filePath = self.logVoIPFilePath, fileName = self.logVoIPFileName )
-        self.polycubeHandler = PolycubeHandler(polycubeServerAddress, polycubeServerPort)
+        if interceptionTool == InterceptionTool.PolycubePacketCapture :
+            self.interceptionHandler = PolycubeHandler(polycubeServerAddress, polycubeServerPort)
+        elif interceptionTool == InterceptionTool.Tcpdump :
+            self.interceptionHandler = TcpdumpHandler()
+        else :
+            self.interceptionHandler = None
 
     def run( self ):
         while self.is_active :
@@ -51,12 +60,15 @@ class InterceptionTask( threading.Thread ):
                         # - start/stop Polycube packetcapture, get from VoIP log parameters
                         self.logger.debug( "create packet capture" )
                         boolResult = False
-                        """
-                        boolResult = self.polycubeHandler.interceptionStart( 
-                            self.userID, self.serviceProviderID, self.serviceID,
-                            srcAddress, srcPort, dstAddress, dstPort, l4Proto, 
-                            self.interceptionInterfaceName )
-                        """
+                        
+                        if self.interceptionHandler :
+                            boolResult = self.interceptionHandler.interceptionStart( 
+                                self.userID, self.serviceProviderID, self.serviceID,
+                                srcAddress, srcPort, dstAddress, dstPort, l4Proto, 
+                                self.interceptionInterfaceName )
+                        else :
+                            self.logger.error( "interception tool UNDEFINED or UNKNOWN (1)" )
+
                         self.logger.debug( "result of Polycube Packetcapture start: %s", str( boolResult ) )
                     else :
                         break
@@ -75,9 +87,12 @@ class InterceptionTask( threading.Thread ):
 
         # When main thread is stopped, the Polycube Packetcapture is removed
         boolResult = False
-        """
-        boolResult = self.polycubeHandler.interceptionStop( self.userID, self.providerID, self.serviceID )
-        """
+        
+        if self.interceptionHandler :
+            boolResult = self.interceptionHandler.interceptionStop( self.userID, self.providerID, self.serviceID )
+        else :
+            self.logger.error( "interception tool UNDEFINED or UNKNOWN (2)" )
+        
         self.logger.debug( "result of Polycube Packetcapture stop : %s", str( boolResult ) )
 
     def stop( self ):

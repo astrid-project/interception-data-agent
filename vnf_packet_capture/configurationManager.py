@@ -9,6 +9,11 @@ import json
 import logging
 from myLogger import MyLogger
 
+class InterceptionTool( Enum ) :
+    Undefined = 0
+    PolycubePacketCapture = 1
+    Tcpdump = 2
+
 class ConfigurationManager():
     """
     Configuration Manager is used to manage the configuration parameters.
@@ -40,6 +45,7 @@ class ConfigurationManager():
         self.polycubeServerParams = {} # "address" and "port"
         self.kafkaServerParams = {} # "address" and "port"
         self.logVoIPServerParams = {} # "path" and "timeout"
+        self.interceptionTool = ""
 
         try:
             path = self.configFilePath + self.configFileName
@@ -83,22 +89,37 @@ class ConfigurationManager():
                 self.logger.debug( "Polycube address: %s, port: %s",
                     str( self.polycubeServerParams[ "address" ] ),
                     str( self.polycubeServerParams[ "port" ] ) )
-            kafkaServer = parameters.get( "kafkaServer")
+            kafkaServer = parameters.get( "kafkaServer", "" )
             if kafkaServer != "" :
                 self.kafkaServerParams[ "address" ] = kafkaServer.get( "address", "" )
                 self.kafkaServerParams[ "port" ] = kafkaServer.get( "port", "" )
                 self.logger.debug( "Kafka server address: %s, port: %s",
                     str( self.kafkaServerParams[ "address" ] ),
                     str( self.kafkaServerParams[ "port" ] ) )
-            logVoIPServer = parameters.get( "logVoIPServer" )
+            logVoIPServer = parameters.get( "logVoIPServer", "" )
             if logVoIPServer != "" :
                 self.logVoIPServerParams[ "path" ] = logVoIPServer.get( "path", "" )
                 self.logVoIPServerParams[ "name" ] = logVoIPServer.get( "name", "" )
                 self.logVoIPServerParams[ "readingTimeOut" ] = logVoIPServer.get( "readingTimeOut", 0.5 )
                 self.logger.debug( "log VoIP server path: \"%s\", file name: \"%s\", reading timeout: %s sec",
                     str( self.logVoIPServerParams[ "path" ] ), str( self.logVoIPServerParams[ "name" ] ),
-                    str( self.logVoIPServerParams[ "readingTimeOut" ] ) ) 
-
+                    str( self.logVoIPServerParams[ "readingTimeOut" ] ) )
+            interceptionTool = parameters.get( "interceptionTool", "" )
+            if interceptionTool != "" :
+                isPolycubePacketCaptureEnabled = interceptionTool.get( "polycubePacketCapture", False )
+                isTcpdumpEnabled = interceptionTool.get( "tcpdump" , False )
+                if isPolycubePacketCaptureEnabled :
+                    self.logger.debug( "interception tool is set to be Polycube Packetcapture" )
+                    self.interceptionTool = InterceptionTool.PolycubePacketCapture
+                if isTcpdumpEnabled :
+                    self.logger.debug( "interception tools is set to be Tcpdump" )
+                    self.interceptionTool = InterceptionTool.Tcpdump
+                if isPolycubePacketCaptureEnabled and isTcpdumpEnabled :
+                    self.logger.error( "yet Polycube Packetcapture and Tcpdump are set to be enabled" )
+                    raise Exception( "yet Polycube Packetcapture and Tcpdump are set to be enabled" )
+                if isPolycubePacketCaptureEnabled == False and isTcpdumpEnabled == False :
+                    self.logger.error( "yet Polycube Packetcapture and Tcpdump are set do be DISABLED" )
+                    raise Exception( "yet Polycube Packetcapture and Tcpdump are set do be DISABLED" )
         return None
 
     def getLoggerLevel( self ) :
@@ -134,3 +155,5 @@ class ConfigurationManager():
     def getVoIPLogReadingTimeOut( self ) :
         return self.logVoIPServerParams[ "readingTimeOut" ]
 
+    def getInterceptionTool( self ) :
+        return self.interceptionTool
