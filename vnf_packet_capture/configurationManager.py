@@ -8,6 +8,7 @@ info: guerino.lamanna@infocomgenova.it
 import json
 import logging
 from myLogger import MyLogger
+from enum import Enum
 
 class InterceptionTool( Enum ) :
     Undefined = 0
