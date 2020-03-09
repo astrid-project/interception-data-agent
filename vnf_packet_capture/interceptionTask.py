@@ -52,16 +52,17 @@ class InterceptionTask( threading.Thread ):
                         # parse event and get the data (srcAddress, etc)
                         self.logger.debug( "catched event \"changeInterceptedIPParameter\" : " )
                         self.logger.debug( "userID: %s / providerID : %s / serviceID : %s", 
-                            str( event.userID ), str( event.providerID ), str( event.serviceID ) )
+                            str( event.get( "userID", "" ) ), str( event.get( "providerID", "" ) ), 
+                            str( event.get( "serviceID", "") ) )
                         self.logger.debug( "srcAddress : %s / srcPort : %s ",
-                            str( event.srcAddress ), str( event.srcPort ) )
+                            str( event.get( "srcAddress", "" ) ), str( event.get( "srcPort", "" ) ) )
                         self.logger.debug( "dstAddress : %s / dstPort : %s",
-                            str( event.dstAddress ), str( event.dstPort ) )
+                            str( event.get( "dstAddress", "" ) ), str( event.get( "dstPort", "" ) ) )
 
-                        srcAddress = event.srcAddress
-                        srcPort = event.srcPort
-                        dstAddress = event.dstAddress
-                        dstPort = event.dstPort
+                        srcAddress = event.get( "srcAddress", "0.0.0.0" )
+                        srcPort = event.get( "srcPort", "0" )
+                        dstAddress = event.get( "dstAddress", "0.0.0.0" )
+                        dstPort = event.get( "dstPort", "0" )
                         l4Proto = ""
                         
                         # - start/stop Polycube packetcapture, get from VoIP log parameters
