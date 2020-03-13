@@ -19,7 +19,8 @@ class InterceptionTask( threading.Thread ):
     def __init__( self, userID, providerID, serviceID,
     polycubeServerAddress, polycubeServerPort, interceptionInterfaceName, 
     logVoIPFilePath = "./", logVoIPFileName = "file.log", readVoIPLogTimeout = 0.5,
-    interceptionTool = InterceptionTool.PolycubePacketCapture ):
+    interceptionTool = InterceptionTool.PolycubePacketCapture,
+    savedInterceptionPath = "./" ):
         myLogger = MyLogger()
         self.logger = myLogger.getLogger( __name__ )
         threading.Thread.__init__( self )
@@ -35,10 +36,14 @@ class InterceptionTask( threading.Thread ):
          providerID = self.providerID, serviceID = self.serviceID,
          filePath = self.logVoIPFilePath, fileName = self.logVoIPFileName )
         if interceptionTool == InterceptionTool.PolycubePacketCapture :
-            self.interceptionHandler = PolycubeHandler(polycubeServerAddress, polycubeServerPort)
+            self.logger.debug( "Polycube PacketCapture activation" )
+            self.interceptionHandler = PolycubeHandler( 
+                polycubeServerAddress, polycubeServerPort, savedInterceptionPath )
         elif interceptionTool == InterceptionTool.Tcpdump :
-            self.interceptionHandler = TcpdumpHandler()
+            self.logger.debug( "Tcpdump activation" )
+            self.interceptionHandler = TcpdumpHandler( savedInterceptionPath, "capture.pcap" )
         else :
+            self.logger.error( "no interception tool chosen !!!" )
             self.interceptionHandler = None
 
     def run( self ):

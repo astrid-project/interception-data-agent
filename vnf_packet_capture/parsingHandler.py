@@ -71,7 +71,7 @@ class ParsingHandler() :
                 if not line :
                     self.logger.debug( "end of file" )
                     break
-                self.logger.debug( "read line: %s", line )
+                #self.logger.debug( "read line: %s", line )
 
                 # TODO : parse line and create and Event
                 if self.__findOutChangeInterceptedIPParametersEvent( line ) :

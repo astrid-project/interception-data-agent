@@ -28,6 +28,7 @@ class RestServerHandler( BaseHTTPRequestHandler ) :
     readVoIPLogTimeout = 0
     logger = ""
     interceptionTool = InterceptionTool.Undefined
+    savedInterceptionPath = ""
 
     def _set_headers( self ) :
         self.send_response( 200 ) 
@@ -79,7 +80,9 @@ class RestServerHandler( BaseHTTPRequestHandler ) :
                 interceptionTask = InterceptionTask( userID, providerID, serviceID, 
                     RestServerHandler.polycubeServerAddress, RestServerHandler.polycubeServerPort, 
                     RestServerHandler.interceptionInterfaceName, RestServerHandler.logVoIPFilePath, 
-                    RestServerHandler.logVoIPFileName, RestServerHandler.readVoIPLogTimeout )
+                    RestServerHandler.logVoIPFileName, RestServerHandler.readVoIPLogTimeout,
+                    RestServerHandler.interceptionTool,
+                    RestServerHandler.savedInterceptionPath )
                 interceptionTask.start()
                 RestServerHandler.interceptionTasks[ interceptionName ] = interceptionTask
                 
@@ -111,7 +114,8 @@ class RestServerHandler( BaseHTTPRequestHandler ) :
 class RestServer():
     def __init__( self, restServerAddress, restServerPort,
         polycubeServerAddress, polycubeServerPort, interceptionInterfaceName,
-        logVoIPFilePath, logVoIPFileName, readVoIPLogTimeout ):
+        logVoIPFilePath, logVoIPFileName, readVoIPLogTimeout, 
+        interceptionTool, savedInterceptionPath ):
         
         myLogger = MyLogger()
         self.logger = myLogger.getLogger( __name__ )
@@ -125,6 +129,8 @@ class RestServer():
         RestServerHandler.logVoIPFileName = logVoIPFileName
         RestServerHandler.readVoIPLogTimeout = readVoIPLogTimeout
         RestServerHandler.logger = self.logger
+        RestServerHandler.interceptionTool = interceptionTool
+        RestServerHandler.savedInterceptionPath = savedInterceptionPath
         return None
     
     def run( self ) :

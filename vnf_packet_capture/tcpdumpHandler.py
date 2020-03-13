@@ -18,12 +18,14 @@ logger.addHandler( logHandler )
 logger.setLevel( debugLevel )
 
 class TcpdumpHandler() :
-    def __init__( self ) :
+    def __init__( self, savedInterceptionPath = "./", savedInterceptionFileName = "capture.pcap" ) :
         self.packetCaptureList = {}
+        self.savedInterceptionPath = savedInterceptionPath
+        self.savedInterceptionFileName = savedInterceptionFileName
 
     def __composeTcpdumpCommand( self, srcAddress, srcPort, dstAddress, dstPort, interfaceToAttachName,
                                     pcapFilePath = "./", pcapFileName = "capture.pcap" ) :
-        args = [ "tcpdump "]
+        args = [ "tcpdump"]
         if interfaceToAttachName :
             args.append( "-i" )
             args.append( interfaceToAttachName )
@@ -39,6 +41,10 @@ class TcpdumpHandler() :
         if dstPort :
             args.append( "dst port" )
             args.append( str( dstPort ) )
+        completePath = "\"" + pcapFilePath + pcapFileName + "\""
+        args.append( "-w" )
+        args.append( completePath )
+        logger.debug( args )
         return args
 
     def interceptionStart( self, userID, providerID, serviceID, srcAddress, srcPort, dstAddress, dstPort, l4Proto = None, interfaceToAttachName = None ) :
@@ -55,7 +61,8 @@ class TcpdumpHandler() :
                 self.interceptionStop( userID, providerID, serviceID, srcAddress, srcPort,
                     dstAddress, dstPort, l4Proto )
 
-        args = self.__composeTcpdumpCommand( srcAddress, srcPort, dstAddress, dstPort, interfaceToAttachName )
+        args = self.__composeTcpdumpCommand( srcAddress, srcPort, dstAddress, dstPort, interfaceToAttachName,
+            self.savedInterceptionPath, self.savedInterceptionFileName )
         tcpdumpProcess = subprocess.Popen( args, stdout = DEVNULL, stderr = DEVNULL )
 
         self.packetCaptureList[ packetCaptureName ] = ( srcAddress, srcPort, dstAddress, 
@@ -68,7 +75,7 @@ class TcpdumpHandler() :
         packetCaptureName = str( serviceID ) + "." + str( providerID ) + "." + str( userID )
         packetCaptureData = self.packetCaptureList.pop( packetCaptureName, False )
         if packetCaptureData :
-            tcpdumpProcess = packetCaptureData[4]
+            tcpdumpProcess = packetCaptureData[5]
             # check if "tcpdump" process is yet running
             if tcpdumpProcess.poll() == None :
                 # terminate the "tcpdump" process

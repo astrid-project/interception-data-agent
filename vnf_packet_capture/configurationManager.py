@@ -42,6 +42,7 @@ class ConfigurationManager():
         # buffer to save configuration parameters 
         self.loggerLevel = logging.DEBUG
         self.interceptionInterfaceName = ""
+        self.savedInterceptionPath = ""
         self.restServerParams = {} # "address" and "port"
         self.polycubeServerParams = {} # "address" and "port"
         self.kafkaServerParams = {} # "address" and "port"
@@ -54,7 +55,7 @@ class ConfigurationManager():
                 self.jsonDictionary = json.load( jsonFile )
         except FileNotFoundError as exception:
             if self.logger :
-                self.logger.debug( exception )
+                self.logger.error( exception )
             else :
                 print( exception )
 
@@ -76,6 +77,8 @@ class ConfigurationManager():
                 self.logger.debug( "logLevel: %s", str( self.loggerLevel ) )
             self.interceptionInterfaceName = parameters.get( "interceptionInterfaceName", "" )
             self.logger.debug( "interception interface name: %s", str( self.interceptionInterfaceName ) )
+            self.savedInterceptionPath = parameters.get( "savedInterceptionPath", "" )
+            self.logger.debug( "saved interceptions path : %s", str( self.savedInterceptionPath ) )
             restServer = parameters.get( "restServer", "" )
             if restServer != "" :
                 self.restServerParams[ "address" ] = restServer.get( "address", "" )
@@ -128,6 +131,9 @@ class ConfigurationManager():
 
     def getInterceptionInterfaceName( self ) :
         return self.interceptionInterfaceName
+
+    def getSavedInterceptionPath( self ) :
+        return self.savedInterceptionPath
 
     def getRestServerAddress( self ) :
         return self.restServerParams[ "address" ]

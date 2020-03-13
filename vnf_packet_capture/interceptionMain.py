@@ -16,13 +16,14 @@ def main() :
         restServer = RestServer( confBox.getRestServerAddress(), confBox.getRestServerPort(),
             confBox.getPolycubeServerAddress(), confBox.getPolycubeServerPort(), 
             confBox.getInterceptionInterfaceName(), confBox.getLogVoIPServerPath(), 
-            confBox.getLogVoIPServerFilename(), confBox.getVoIPLogReadingTimeOut()  )
+            confBox.getLogVoIPServerFilename(), confBox.getVoIPLogReadingTimeOut(),
+            confBox.getInterceptionTool(), confBox.getSavedInterceptionPath() )
         restServer.run()
     except Exception as e :
         logger.error( e )
 
 
-if __name__ == "__main__" :    
+if __name__ == "__main__" :
     confBox = ConfigurationManager()
     myLogger = MyLogger()
     logger = myLogger.getLogger( logName = __name__ )

@@ -28,7 +28,7 @@ class PolycubeAPI() :
     
     def createPacketCapture( self, packetCaptureName ) :
         createPacketCaptureEndpoint = self.polycubeURL + "packetcapture/" + packetCaptureName + "/"
-        payload = {}
+        payload = { 'capture' : 'bidirectional' }
         logger.debug( createPacketCaptureEndpoint )
         logger.debug( json.dumps( payload ) )
         response = requests.post( createPacketCaptureEndpoint, data = json.dumps( payload ) )
@@ -50,7 +50,7 @@ class PolycubeAPI() :
 
     def srcIPSetPacketCapture( self, packetCaptureName, ipaddress = "0.0.0.0", mask = "24" ) :
         srcIPSetPacketCaptureEndpoint = self.polycubeURL + packetCaptureName + "/filters/src"
-        payload = ipaddress + "/" + mask
+        payload = "\"" + ipaddress + "/" + mask + "\""
         logger.debug( srcIPSetPacketCaptureEndpoint )
         logger.debug( payload )
         response = requests.patch( srcIPSetPacketCaptureEndpoint, data = payload )
@@ -105,6 +105,16 @@ class PolycubeAPI() :
         delPacketCaptureEndpoint = self.polycubeURL + "packetcapture/" + packetCapturename
         logger.debug( delPacketCaptureEndpoint )
         response = requests.delete( delPacketCaptureEndpoint )
+        if response.status_code == 200 :
+            return True
+        return False
+
+    def dumpPathSetPacketCapture( self, packetCaptureName, dumpPath="./" ) :
+        dumpPathSetPacketCaptureEndpoint = self.polycubeURL + packetCaptureName + "/dump"
+        payload = "\"" + dumpPath + "\""
+        logger.debug( dumpPathSetPacketCaptureEndpoint )
+        logger.debug( payload )
+        response = requests.patch( dumpPathSetPacketCaptureEndpoint, payload )
         if response.status_code == 200 :
             return True
         return False

@@ -17,9 +17,11 @@ logger.addHandler( logHandler )
 logger.setLevel( debugLevel )
 
 class PolycubeHandler() :
-    def __init__( self, polycubeServerAddress = "127.0.0.1", polycubeServerPort = 9000 ) :
+    def __init__( self, polycubeServerAddress = "127.0.0.1", polycubeServerPort = 9000,
+                    savedInterceptionPath = "./" ) :
         self.packetCaptureList = {}
         self.polycubeAPI = PolycubeAPI()
+        self.savedInterceptionPath = savedInterceptionPath
 
     def interceptionStart( self, userID, providerID, serviceID, srcAddress, srcPort, dstAddress,
         dstPort, l4Proto = None, interfaceToAttachName = None ) :
@@ -42,9 +44,10 @@ class PolycubeHandler() :
                     dstAddress, dstPort, l4Proto )
 
         self.polycubeAPI.createPacketCapture( packetCaptureName )
+        self.polycubeAPI.dumpPathSetPacketCapture( packetCaptureName, self.savedInterceptionPath )
         self.polycubeAPI.attachPacketCapture( packetCaptureName, interfaceToAttachName )
         if srcAddress :
-            self.polycubeAPI.srcIPSetPacketCapture( packetCaptureName, srcAddress )
+            self.polycubeAPI.srcIPSetPacketCapture( packetCaptureName )
 
         self.packetCaptureList[ packetCaptureName ] = ( srcAddress, srcPort, dstAddress, dstPort, l4Proto )
         return True
