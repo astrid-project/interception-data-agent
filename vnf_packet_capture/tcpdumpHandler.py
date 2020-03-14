@@ -8,6 +8,7 @@ info: guerino.lamanna@infocomgenova.it
 import logging
 import subprocess
 from subprocess import DEVNULL
+from pathlib import Path
 
 
 # debug logger instance
@@ -23,31 +24,58 @@ class TcpdumpHandler() :
         self.savedInterceptionPath = savedInterceptionPath
         self.savedInterceptionFileName = savedInterceptionFileName
 
-    def __composeTcpdumpCommand( self, srcAddress, srcPort, dstAddress, dstPort, interfaceToAttachName,
+    def __composeTcpdumpCommand( self, srcAddress = None, srcPort = None, dstAddress = None, dstPort = None, 
+                                    interfaceToAttachName = None,
                                     pcapFilePath = "./", pcapFileName = "capture.pcap" ) :
         args = [ "tcpdump"]
+        firstFilter = True
         if interfaceToAttachName :
             args.append( "-i" )
             args.append( interfaceToAttachName )
+
+        # Traffic filters
         if srcAddress :
+            if firstFilter == False :
+                args.append( "and" )
+            else :
+                firstFilter = False
             args.append( "src" )
             args.append( srcAddress )
         if dstAddress :
+            if firstFilter == False :
+                args.append( "or" )
+            else :
+                firstFilter =  False
             args.append( "dst" )
             args.append( dstAddress )
         if srcPort :
+            if firstFilter == False :
+                args.append( "and" )
+            else :
+                firstFilter = False
             args.append( "src port")
             args.append( str( srcPort ) )
         if dstPort :
+            if firstFilter == False :
+                args.append( "or" )
+            else :
+                firstFilter = False
             args.append( "dst port" )
             args.append( str( dstPort ) )
-        completePath = "\"" + pcapFilePath + pcapFileName + "\""
+
+        # Create path if different from local directory
+        if pcapFilePath != "./" :
+            Path( pcapFilePath ).mkdir( parents = True, exist_ok = True )
+
+        completePath = pcapFilePath + pcapFileName
         args.append( "-w" )
         args.append( completePath )
         logger.debug( args )
         return args
 
-    def interceptionStart( self, userID, providerID, serviceID, srcAddress, srcPort, dstAddress, dstPort, l4Proto = None, interfaceToAttachName = None ) :
+    def interceptionStart( self, userID, providerID, serviceID, 
+            srcAddress = None, srcPort = None, dstAddress = None, dstPort = None, 
+            l4Proto = None, interfaceToAttachName = None ) :
         logger.debug( "interceptionStart" )
         packetCaptureName = str( serviceID ) + "." + str( providerID ) + "." + str( userID )
 

@@ -66,8 +66,14 @@ class InterceptionTask( threading.Thread ):
 
                         srcAddress = event.get( "srcAddress", "0.0.0.0" )
                         srcPort = event.get( "srcPort", "0" )
-                        dstAddress = event.get( "dstAddress", "0.0.0.0" )
-                        dstPort = event.get( "dstPort", "0" )
+                        if srcPort == "0" :
+                            srcPort = None
+                        #dstAddress = event.get( "dstAddress", "0.0.0.0" )
+                        #dstPort = event.get( "dstPort", "0" )
+                        
+                        # copy src in dst so capture traffic in bidirectional mode (to and from intercepted IP)
+                        dstAddress = srcAddress
+                        dstPort = srcPort
                         l4Proto = ""
                         
                         # - start/stop Polycube packetcapture, get from VoIP log parameters
