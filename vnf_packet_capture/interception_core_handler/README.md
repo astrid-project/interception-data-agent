@@ -1,18 +1,18 @@
-# Interception Data Agent description
-The "Interception Data Agent" is a software developed in the Astrid Project. 
-The code is used to retrieve information about VoIP (calls information and interception), 
-following of a LEA (Law Enforcement Agency) request. 
-The interception software makes use of SeVoC (VoIP) and Polycube PacketCapture.
+# Interception Core Handler description
+The "Interception Core Handler" is used to retrieve information about VoIP (calls information 
+and interception), following of a LEA (Law Enforcement Agency) request. 
+Interception software makes use of SeVoC (VoIP) and Polycube PacketCapture.
 
-## Table of Contents
-- [Interception Data Agent]
-- [Architecture description]
+# Table of Contents
+- [Architectural description]
 - [Installation]
+- [Configuration]
 - [Usage]
 
-# Architecture description
+# Architectural description
 
-This code implements "INTERCEPTION" agent on the Virtual Network Function (VNF) side.
+This code implements "INTERCEPTION" agent (Interception Core Handler) on the Virtual Network 
+Function (VNF) side.
 
 ```
        VNF          +        ContextBroker     +     SecurityController
@@ -47,17 +47,44 @@ This code implements "INTERCEPTION" agent on the Virtual Network Function (VNF) 
 
 1. Prerequisite
 - Python3
+- pip3
 
 2. Clone the repository
 
 ```bash
 git clone https://gitlab.com/astrid-repositories/wp2/interception-data-agent.git
-cd context-broker-apis
+```
+
+3. Install
+
+```
+cd interception-data-agent\interception_core_handler
+./scripts/install.sh
+```
+
+# Configuration
+The software configuration can be done using the file "configurationFile.conf" in the "config" folder (interception-data-agent/interception_core_handler/config/configurationFile.conf).
+The configuration file is in JSON format.
+All parameters are in the "parameters" scope.
+Following is the description of every field:
+
+```
+- loggerLevel : set up the level of debug between "INFO", "WARN", "DEBUG", "ERROR"
+- interceptionInterfaceName : network interface used to intercepted VoIP traffic
+- savedInterceptionPath : where "pcap" file (intercepted VoIP stream) is saved
+- restServer : set up IP address and port on where "Interception Core Handler" recives requests to active/stop interception
+- kafkaServer : Kafka IP address and port (usually outside the VM)
+- logVoIPServer : deals with VoIP software log (correlation between "User VoIP number"/"User IP address")
+  -- path : path where is the log file
+  -- name : name of the log file
+  -- readingTimeOut : sleeping time before log file reading (default 0.5 seconds)
+- interceptionTools : specify what tool use to VoIP interception. Set flag between "true" (in use) and "false" (not in use)
 ```
 
 # Usage
 
 ```bash
-python3 interceptionMain.py
+cd interception-data-agent\interception_core_handler
+./scripts/run.sh
 ```
 

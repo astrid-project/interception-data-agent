@@ -1,0 +1,239 @@
+INFO  [2020-03-04 10:48:18,412] liquibase: Successfully acquired change log lock
+INFO  [2020-03-04 10:48:21,782] liquibase: Creating database history table with name: public.databasechangelog
+INFO  [2020-03-04 10:48:21,890] liquibase: Reading from public.databasechangelog
+INFO  [2020-03-04 10:48:22,174] liquibase: messagedb.xml: messagedb.xml::1::moxie: Table messages created
+INFO  [2020-03-04 10:48:22,186] liquibase: messagedb.xml: messagedb.xml::1::moxie: Index destination_index created
+INFO  [2020-03-04 10:48:22,202] liquibase: messagedb.xml: messagedb.xml::1::moxie: Index destination_and_type_index created
+INFO  [2020-03-04 10:48:22,214] liquibase: messagedb.xml: messagedb.xml::1::moxie: ChangeSet messagedb.xml::1::moxie ran successfully in 134ms
+INFO  [2020-03-04 10:48:22,256] liquibase: messagedb.xml: messagedb.xml::2::moxie: Columns content(bytea) added to messages
+INFO  [2020-03-04 10:48:22,259] liquibase: messagedb.xml: messagedb.xml::2::moxie: Null constraint dropped from messages.message
+INFO  [2020-03-04 10:48:22,270] liquibase: messagedb.xml: messagedb.xml::2::moxie: ChangeSet messagedb.xml::2::moxie ran successfully in 18ms
+INFO  [2020-03-04 10:48:22,346] liquibase: messagedb.xml: messagedb.xml::3::moxie: Custom SQL executed
+INFO  [2020-03-04 10:48:22,366] liquibase: messagedb.xml: messagedb.xml::3::moxie: ChangeSet messagedb.xml::3::moxie ran successfully in 31ms
+INFO  [2020-03-04 10:48:22,429] liquibase: messagedb.xml: messagedb.xml::4::moxie: Custom SQL executed
+INFO  [2020-03-04 10:48:22,438] liquibase: messagedb.xml: messagedb.xml::4::moxie: Custom SQL executed
+INFO  [2020-03-04 10:48:22,450] liquibase: messagedb.xml: messagedb.xml::4::moxie: ChangeSet messagedb.xml::4::moxie ran successfully in 27ms
+INFO  [2020-03-04 10:48:22,511] liquibase: Successfully released change log lock
+INFO  [2020-03-04 10:48:31,757] liquibase: Successfully acquired change log lock
+INFO  [2020-03-04 10:48:34,123] liquibase: Creating database history table with name: public.databasechangelog
+INFO  [2020-03-04 10:48:34,262] liquibase: Reading from public.databasechangelog
+INFO  [2020-03-04 10:48:34,623] liquibase: migrations.xml: migrations.xml::1::moxie: Table accounts created
+INFO  [2020-03-04 10:48:34,786] liquibase: migrations.xml: migrations.xml::1::moxie: Table pending_accounts created
+INFO  [2020-03-04 10:48:34,854] liquibase: migrations.xml: migrations.xml::1::moxie: Table keys created
+INFO  [2020-03-04 10:48:34,918] liquibase: migrations.xml: migrations.xml::1::moxie: Index keys_number_index created
+INFO  [2020-03-04 10:48:34,954] liquibase: migrations.xml: migrations.xml::1::moxie: ChangeSet migrations.xml::1::moxie ran successfully in 531ms
+INFO  [2020-03-04 10:48:35,073] liquibase: migrations.xml: migrations.xml::2::matt: Columns data(json) added to accounts
+INFO  [2020-03-04 10:48:35,097] liquibase: migrations.xml: migrations.xml::2::matt: Custom SQL executed
+INFO  [2020-03-04 10:48:35,121] liquibase: migrations.xml: migrations.xml::2::matt: Custom SQL executed
+INFO  [2020-03-04 10:48:35,150] liquibase: migrations.xml: migrations.xml::2::matt: Custom SQL executed
+INFO  [2020-03-04 10:48:35,156] liquibase: migrations.xml: migrations.xml::2::matt: Null constraint has been added to accounts.data
+INFO  [2020-03-04 10:48:35,160] liquibase: migrations.xml: migrations.xml::2::matt: Column accounts.auth_token dropped
+INFO  [2020-03-04 10:48:35,181] liquibase: migrations.xml: migrations.xml::2::matt: Column accounts.salt dropped
+INFO  [2020-03-04 10:48:35,201] liquibase: migrations.xml: migrations.xml::2::matt: Column accounts.signaling_key dropped
+INFO  [2020-03-04 10:48:35,222] liquibase: migrations.xml: migrations.xml::2::matt: Column accounts.gcm_id dropped
+INFO  [2020-03-04 10:48:35,228] liquibase: migrations.xml: migrations.xml::2::matt: Column accounts.apn_id dropped
+INFO  [2020-03-04 10:48:35,232] liquibase: migrations.xml: migrations.xml::2::matt: Column accounts.supports_sms dropped
+INFO  [2020-03-04 10:48:35,237] liquibase: migrations.xml: migrations.xml::2::matt: Custom SQL executed
+INFO  [2020-03-04 10:48:35,240] liquibase: migrations.xml: migrations.xml::2::matt: Custom SQL executed
+INFO  [2020-03-04 10:48:35,245] liquibase: migrations.xml: migrations.xml::2::matt: Columns device_id(bigint) added to keys
+INFO  [2020-03-04 10:48:35,565] liquibase: migrations.xml: migrations.xml::2::matt: Table pending_devices created
+INFO  [2020-03-04 10:48:35,632] liquibase: migrations.xml: migrations.xml::2::matt: Table messages created
+INFO  [2020-03-04 10:48:35,737] liquibase: migrations.xml: migrations.xml::2::matt: Index messages_account_and_device created
+INFO  [2020-03-04 10:48:35,761] liquibase: migrations.xml: migrations.xml::2::matt: ChangeSet migrations.xml::2::matt ran successfully in 724ms
+INFO  [2020-03-04 10:48:35,862] liquibase: migrations.xml: migrations.xml::3::moxie: Custom SQL executed
+INFO  [2020-03-04 10:48:35,874] liquibase: migrations.xml: migrations.xml::3::moxie: Custom SQL executed
+INFO  [2020-03-04 10:48:35,881] liquibase: migrations.xml: migrations.xml::3::moxie: Custom SQL executed
+INFO  [2020-03-04 10:48:35,913] liquibase: migrations.xml: migrations.xml::3::moxie: ChangeSet migrations.xml::3::moxie ran successfully in 91ms
+INFO  [2020-03-04 10:48:35,959] liquibase: migrations.xml: migrations.xml::4::moxie: Column keys.identity_key dropped
+INFO  [2020-03-04 10:48:36,006] liquibase: migrations.xml: migrations.xml::4::moxie: ChangeSet migrations.xml::4::moxie ran successfully in 55ms
+INFO  [2020-03-04 10:48:36,086] liquibase: migrations.xml: migrations.xml::5::moxie: Columns timestamp(bigint) added to pending_accounts
+INFO  [2020-03-04 10:48:36,095] liquibase: migrations.xml: migrations.xml::5::moxie: Columns timestamp(bigint) added to pending_devices
+INFO  [2020-03-04 10:48:36,126] liquibase: migrations.xml: migrations.xml::5::moxie: ChangeSet migrations.xml::5::moxie ran successfully in 55ms
+INFO  [2020-03-04 10:48:36,193] liquibase: Successfully released change log lock
+INFO  [2020-03-04 10:48:40,917] org.eclipse.jetty.util.log: Logging initialized @4618ms to org.eclipse.jetty.util.log.Slf4jLog
+INFO  [2020-03-04 10:48:41,352] io.dropwizard.server.DefaultServerFactory: Registering jersey handler with root path prefix: /
+INFO  [2020-03-04 10:48:41,356] io.dropwizard.server.DefaultServerFactory: Registering admin handler with root path prefix: /
+INFO  [2020-03-04 10:48:43,521] com.relayrides.pushy.apns.ApnsClientBuilder: Native SSL provider is available and supports ALPN; will use native provider.
+INFO  [2020-03-04 10:48:47,234] io.dropwizard.jersey.DropwizardResourceConfig: The following paths were found for the configured resources:
+
+    GET     /v1/keepalive (org.whispersystems.textsecuregcm.controllers.KeepAliveController)
+    GET     /v1/keepalive/provisioning (org.whispersystems.textsecuregcm.controllers.KeepAliveController)
+    GET     /v1/messages (org.whispersystems.textsecuregcm.controllers.MessageController)
+    PUT     /v1/messages/{destination} (org.whispersystems.textsecuregcm.controllers.MessageController)
+    DELETE  /v1/messages/{source}/{timestamp} (org.whispersystems.textsecuregcm.controllers.MessageController)
+    GET     /v1/profile/form/avatar (org.whispersystems.textsecuregcm.controllers.ProfileController)
+    PUT     /v1/profile/name/{name} (org.whispersystems.textsecuregcm.controllers.ProfileController)
+    GET     /v1/profile/{number} (org.whispersystems.textsecuregcm.controllers.ProfileController)
+
+INFO  [2020-03-04 10:48:47,484] io.dropwizard.jersey.DropwizardResourceConfig: The following paths were found for the configured resources:
+
+    GET     /v1/keepalive (org.whispersystems.textsecuregcm.controllers.KeepAliveController)
+    GET     /v1/keepalive/provisioning (org.whispersystems.textsecuregcm.controllers.KeepAliveController)
+
+INFO  [2020-03-04 10:48:47,500] io.dropwizard.server.DefaultServerFactory: Registering jersey handler with root path prefix: /
+INFO  [2020-03-04 10:48:47,501] io.dropwizard.server.DefaultServerFactory: Registering admin handler with root path prefix: /
+INFO  [2020-03-04 10:48:47,519] io.dropwizard.server.ServerFactory: Starting whisper-server
+ _    _ _     _                     _____                          
+| |  | | |   (_)                   /  ___|                         
+| |  | | |__  _ ___ _ __   ___ _ __\ `--.  ___ _ ____   _____ _ __ 
+| |/\| | '_ \| / __| '_ \ / _ \ '__|`--. \/ _ \ '__\ \ / / _ \ '__|
+\  /\  / | | | \__ \ |_) |  __/ |  /\__/ /  __/ |   \ V /  __/ |   
+ \/  \/|_| |_|_|___/ .__/ \___|_|  \____/ \___|_|    \_/ \___|_|   
+                   | |                                             
+                   |_|                                             
+
+INFO  [2020-03-04 10:48:47,745] org.eclipse.jetty.setuid.SetUIDListener: Opened application@5dacf18d{HTTP/1.1,[http/1.1]}{0.0.0.0:8080}
+INFO  [2020-03-04 10:48:47,751] org.eclipse.jetty.setuid.SetUIDListener: Opened admin@432a6a69{HTTP/1.1,[http/1.1]}{0.0.0.0:8081}
+INFO  [2020-03-04 10:48:47,754] org.eclipse.jetty.server.Server: jetty-9.4.z-SNAPSHOT
+INFO  [2020-03-04 10:48:50,787] com.relayrides.pushy.apns.ApnsClient: Failed to connect.
+! javax.net.ssl.SSLHandshakeException: error:10000415:SSL routines:OPENSSL_internal:SSLV3_ALERT_CERTIFICATE_EXPIRED
+! at io.netty.handler.ssl.ReferenceCountedOpenSslEngine.shutdownWithError(ReferenceCountedOpenSslEngine.java:708)
+! at io.netty.handler.ssl.ReferenceCountedOpenSslEngine.sslReadErrorResult(ReferenceCountedOpenSslEngine.java:916)
+! at io.netty.handler.ssl.ReferenceCountedOpenSslEngine.unwrap(ReferenceCountedOpenSslEngine.java:871)
+! at io.netty.handler.ssl.ReferenceCountedOpenSslEngine.unwrap(ReferenceCountedOpenSslEngine.java:935)
+! at io.netty.handler.ssl.ReferenceCountedOpenSslEngine.unwrap(ReferenceCountedOpenSslEngine.java:978)
+! at io.netty.handler.ssl.SslHandler$SslEngineType$1.unwrap(SslHandler.java:205)
+! at io.netty.handler.ssl.SslHandler.unwrap(SslHandler.java:1119)
+! at io.netty.handler.ssl.SslHandler.decode(SslHandler.java:1041)
+! at io.netty.handler.codec.ByteToMessageDecoder.callDecode(ByteToMessageDecoder.java:411)
+! at io.netty.handler.codec.ByteToMessageDecoder.channelRead(ByteToMessageDecoder.java:248)
+! at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:362)
+! at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:348)
+! at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:340)
+! at io.netty.channel.DefaultChannelPipeline$HeadContext.channelRead(DefaultChannelPipeline.java:1334)
+! at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:362)
+! at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:348)
+! at io.netty.channel.DefaultChannelPipeline.fireChannelRead(DefaultChannelPipeline.java:926)
+! at io.netty.channel.nio.AbstractNioByteChannel$NioByteUnsafe.read(AbstractNioByteChannel.java:134)
+! at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:624)
+! at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:559)
+! at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:476)
+! at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:438)
+! at io.netty.util.concurrent.SingleThreadEventExecutor$5.run(SingleThreadEventExecutor.java:858)
+! at io.netty.util.concurrent.DefaultThreadFactory$DefaultRunnableDecorator.run(DefaultThreadFactory.java:144)
+! at java.lang.Thread.run(Thread.java:748)
+WARN  [2020-03-04 10:48:50,788] io.netty.handler.ssl.ApplicationProtocolNegotiationHandler: [id: 0xf3dca0b0, L:/172.17.0.2:56262 - R:api.push.apple.com/17.188.145.28:443] TLS handshake failed:
+! javax.net.ssl.SSLHandshakeException: error:10000415:SSL routines:OPENSSL_internal:SSLV3_ALERT_CERTIFICATE_EXPIRED
+! at io.netty.handler.ssl.ReferenceCountedOpenSslEngine.shutdownWithError(ReferenceCountedOpenSslEngine.java:708)
+! at io.netty.handler.ssl.ReferenceCountedOpenSslEngine.sslReadErrorResult(ReferenceCountedOpenSslEngine.java:916)
+! at io.netty.handler.ssl.ReferenceCountedOpenSslEngine.unwrap(ReferenceCountedOpenSslEngine.java:871)
+! at io.netty.handler.ssl.ReferenceCountedOpenSslEngine.unwrap(ReferenceCountedOpenSslEngine.java:935)
+! at io.netty.handler.ssl.ReferenceCountedOpenSslEngine.unwrap(ReferenceCountedOpenSslEngine.java:978)
+! at io.netty.handler.ssl.SslHandler$SslEngineType$1.unwrap(SslHandler.java:205)
+! at io.netty.handler.ssl.SslHandler.unwrap(SslHandler.java:1119)
+! at io.netty.handler.ssl.SslHandler.decode(SslHandler.java:1041)
+! at io.netty.handler.codec.ByteToMessageDecoder.callDecode(ByteToMessageDecoder.java:411)
+! at io.netty.handler.codec.ByteToMessageDecoder.channelRead(ByteToMessageDecoder.java:248)
+! at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:362)
+! at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:348)
+! at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:340)
+! at io.netty.channel.DefaultChannelPipeline$HeadContext.channelRead(DefaultChannelPipeline.java:1334)
+! at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:362)
+! at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:348)
+! at io.netty.channel.DefaultChannelPipeline.fireChannelRead(DefaultChannelPipeline.java:926)
+! at io.netty.channel.nio.AbstractNioByteChannel$NioByteUnsafe.read(AbstractNioByteChannel.java:134)
+! at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:624)
+! at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:559)
+! at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:476)
+! at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:438)
+! at io.netty.util.concurrent.SingleThreadEventExecutor$5.run(SingleThreadEventExecutor.java:858)
+! at io.netty.util.concurrent.DefaultThreadFactory$DefaultRunnableDecorator.run(DefaultThreadFactory.java:144)
+! at java.lang.Thread.run(Thread.java:748)
+WARN  [2020-03-04 10:48:50,893] io.netty.channel.DefaultChannelPipeline: An exceptionCaught() event was fired, and it reached at the tail of the pipeline. It usually means the last handler in the pipeline did not handle the exception.
+! javax.net.ssl.SSLHandshakeException: error:10000415:SSL routines:OPENSSL_internal:SSLV3_ALERT_CERTIFICATE_EXPIRED
+! at io.netty.handler.ssl.ReferenceCountedOpenSslEngine.shutdownWithError(ReferenceCountedOpenSslEngine.java:708)
+! at io.netty.handler.ssl.ReferenceCountedOpenSslEngine.sslReadErrorResult(ReferenceCountedOpenSslEngine.java:916)
+! at io.netty.handler.ssl.ReferenceCountedOpenSslEngine.unwrap(ReferenceCountedOpenSslEngine.java:871)
+! at io.netty.handler.ssl.ReferenceCountedOpenSslEngine.unwrap(ReferenceCountedOpenSslEngine.java:935)
+! at io.netty.handler.ssl.ReferenceCountedOpenSslEngine.unwrap(ReferenceCountedOpenSslEngine.java:978)
+! at io.netty.handler.ssl.SslHandler$SslEngineType$1.unwrap(SslHandler.java:205)
+! at io.netty.handler.ssl.SslHandler.unwrap(SslHandler.java:1119)
+! at io.netty.handler.ssl.SslHandler.decode(SslHandler.java:1041)
+! at io.netty.handler.codec.ByteToMessageDecoder.callDecode(ByteToMessageDecoder.java:411)
+! ... 16 common frames omitted
+! Causing: io.netty.handler.codec.DecoderException: javax.net.ssl.SSLHandshakeException: error:10000415:SSL routines:OPENSSL_internal:SSLV3_ALERT_CERTIFICATE_EXPIRED
+! at io.netty.handler.codec.ByteToMessageDecoder.callDecode(ByteToMessageDecoder.java:442)
+! at io.netty.handler.codec.ByteToMessageDecoder.channelRead(ByteToMessageDecoder.java:248)
+! at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:362)
+! at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:348)
+! at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:340)
+! at io.netty.channel.DefaultChannelPipeline$HeadContext.channelRead(DefaultChannelPipeline.java:1334)
+! at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:362)
+! at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:348)
+! at io.netty.channel.DefaultChannelPipeline.fireChannelRead(DefaultChannelPipeline.java:926)
+! at io.netty.channel.nio.AbstractNioByteChannel$NioByteUnsafe.read(AbstractNioByteChannel.java:134)
+! at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:624)
+! at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:559)
+! at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:476)
+! at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:438)
+! at io.netty.util.concurrent.SingleThreadEventExecutor$5.run(SingleThreadEventExecutor.java:858)
+! at io.netty.util.concurrent.DefaultThreadFactory$DefaultRunnableDecorator.run(DefaultThreadFactory.java:144)
+! at java.lang.Thread.run(Thread.java:748)
+INFO  [2020-03-04 10:48:52,049] io.dropwizard.jersey.DropwizardResourceConfig: The following paths were found for the configured resources:
+
+    DELETE  /v1/accounts/apn/ (org.whispersystems.textsecuregcm.controllers.AccountController)
+    PUT     /v1/accounts/apn/ (org.whispersystems.textsecuregcm.controllers.AccountController)
+    PUT     /v1/accounts/attributes/ (org.whispersystems.textsecuregcm.controllers.AccountController)
+    PUT     /v1/accounts/code/{verification_code} (org.whispersystems.textsecuregcm.controllers.AccountController)
+    DELETE  /v1/accounts/gcm/ (org.whispersystems.textsecuregcm.controllers.AccountController)
+    PUT     /v1/accounts/gcm/ (org.whispersystems.textsecuregcm.controllers.AccountController)
+    GET     /v1/accounts/token/ (org.whispersystems.textsecuregcm.controllers.AccountController)
+    PUT     /v1/accounts/token/{verification_token} (org.whispersystems.textsecuregcm.controllers.AccountController)
+    GET     /v1/accounts/turn/ (org.whispersystems.textsecuregcm.controllers.AccountController)
+    POST    /v1/accounts/voice/twiml/{code} (org.whispersystems.textsecuregcm.controllers.AccountController)
+    GET     /v1/accounts/{transport}/code/{number} (org.whispersystems.textsecuregcm.controllers.AccountController)
+    GET     /v1/attachments (org.whispersystems.textsecuregcm.controllers.AttachmentController)
+    GET     /v1/attachments/{attachmentId} (org.whispersystems.textsecuregcm.controllers.AttachmentController)
+    GET     /v1/devices (org.whispersystems.textsecuregcm.controllers.DeviceController)
+    GET     /v1/devices/provisioning/code (org.whispersystems.textsecuregcm.controllers.DeviceController)
+    DELETE  /v1/devices/{device_id} (org.whispersystems.textsecuregcm.controllers.DeviceController)
+    PUT     /v1/devices/{verification_code} (org.whispersystems.textsecuregcm.controllers.DeviceController)
+    PUT     /v1/directory/tokens (org.whispersystems.textsecuregcm.controllers.DirectoryController)
+    GET     /v1/directory/{token} (org.whispersystems.textsecuregcm.controllers.DirectoryController)
+    GET     /v1/federation/attachment/{attachmentId} (org.whispersystems.textsecuregcm.controllers.FederationControllerV1)
+    PUT     /v1/federation/messages/{source}/{sourceDeviceId}/{destination} (org.whispersystems.textsecuregcm.controllers.FederationControllerV1)
+    GET     /v1/federation/user_count (org.whispersystems.textsecuregcm.controllers.FederationControllerV1)
+    GET     /v1/federation/user_tokens/{offset} (org.whispersystems.textsecuregcm.controllers.FederationControllerV1)
+    GET     /v1/messages (org.whispersystems.textsecuregcm.controllers.MessageController)
+    PUT     /v1/messages/{destination} (org.whispersystems.textsecuregcm.controllers.MessageController)
+    DELETE  /v1/messages/{source}/{timestamp} (org.whispersystems.textsecuregcm.controllers.MessageController)
+    GET     /v1/profile/form/avatar (org.whispersystems.textsecuregcm.controllers.ProfileController)
+    PUT     /v1/profile/name/{name} (org.whispersystems.textsecuregcm.controllers.ProfileController)
+    GET     /v1/profile/{number} (org.whispersystems.textsecuregcm.controllers.ProfileController)
+    PUT     /v1/provisioning/{destination} (org.whispersystems.textsecuregcm.controllers.ProvisioningController)
+    PUT     /v1/receipt/{destination}/{messageId} (org.whispersystems.textsecuregcm.controllers.ReceiptController)
+    GET     /v2/federation/key/{number}/{device} (org.whispersystems.textsecuregcm.controllers.FederationControllerV2)
+    GET     /v2/keys (org.whispersystems.textsecuregcm.controllers.KeysController)
+    PUT     /v2/keys (org.whispersystems.textsecuregcm.controllers.KeysController)
+    GET     /v2/keys/signed (org.whispersystems.textsecuregcm.controllers.KeysController)
+    PUT     /v2/keys/signed (org.whispersystems.textsecuregcm.controllers.KeysController)
+    GET     /v2/keys/{number}/{device_id} (org.whispersystems.textsecuregcm.controllers.KeysController)
+
+INFO  [2020-03-04 10:48:52,165] org.eclipse.jetty.server.handler.ContextHandler: Started i.d.j.MutableServletContextHandler@ad5cffa{/,null,AVAILABLE}
+INFO  [2020-03-04 10:48:52,193] io.dropwizard.setup.AdminEnvironment: tasks = 
+
+    POST    /tasks/log-level (io.dropwizard.servlets.tasks.LogConfigurationTask)
+    POST    /tasks/gc (io.dropwizard.servlets.tasks.GarbageCollectionTask)
+
+INFO  [2020-03-04 10:48:52,211] org.eclipse.jetty.server.handler.ContextHandler: Started i.d.j.MutableServletContextHandler@74eab077{/,null,AVAILABLE}
+INFO  [2020-03-04 10:48:52,250] org.eclipse.jetty.server.AbstractConnector: Started application@5dacf18d{HTTP/1.1,[http/1.1]}{0.0.0.0:8080}
+INFO  [2020-03-04 10:48:52,251] org.eclipse.jetty.server.AbstractConnector: Started admin@432a6a69{HTTP/1.1,[http/1.1]}{0.0.0.0:8081}
+INFO  [2020-03-04 10:48:52,253] org.eclipse.jetty.server.Server: Started @15955ms
+INFO  [2020-03-04 11:20:02,326] org.whispersystems.textsecuregcm.auth.AccountAuthenticator: account for +306949193033 ispresent false
+62.74.7.175 - - [04/Mar/2020:11:20:02 +0000] "PUT /v1/accounts/gcm/ HTTP/1.1" 401 49 "-" "okhttp/3.8.1" 140
+INFO  [2020-03-04 11:20:02,875] org.whispersystems.textsecuregcm.auth.AccountAuthenticator: account for +306949193033 ispresent false
+62.74.7.175 - - [04/Mar/2020:11:20:02 +0000] "PUT /v1/directory/tokens HTTP/1.1" 401 49 "-" "okhttp/3.8.1" 14
+192.168.6.136 - - [04/Mar/2020:11:53:02 +0000] "GET / HTTP/1.1" 200 535 "-" "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:73.0) Gecko/20100101 Firefox/73.0" 18
+192.168.6.136 - - [04/Mar/2020:11:53:02 +0000] "GET /favicon.ico HTTP/1.1" 404 243 "-" "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:73.0) Gecko/20100101 Firefox/73.0" 14
+192.168.6.136 - - [04/Mar/2020:11:53:15 +0000] "GET / HTTP/1.1" 404 43 "-" "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:73.0) Gecko/20100101 Firefox/73.0" 75
+192.168.6.136 - - [04/Mar/2020:11:53:20 +0000] "GET /pprof HTTP/1.1" 200 19659 "http://212.101.173.20:8081/" "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:73.0) Gecko/20100101 Firefox/73.0" 10041
+192.168.6.136 - - [04/Mar/2020:12:18:10 +0000] "GET / HTTP/1.1" 404 43 "-" "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:73.0) Gecko/20100101 Firefox/73.0" 5
+192.168.6.136 - - [04/Mar/2020:12:19:34 +0000] "GET / HTTP/1.1" 200 535 "-" "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:73.0) Gecko/20100101 Firefox/73.0" 2
+192.168.6.136 - - [04/Mar/2020:12:19:52 +0000] "GET / HTTP/1.1" 200 535 "-" "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:73.0) Gecko/20100101 Firefox/73.0" 3
+192.168.6.136 - - [04/Mar/2020:12:19:53 +0000] "GET / HTTP/1.1" 200 535 "-" "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:73.0) Gecko/20100101 Firefox/73.0" 1
+INFO  [2020-03-04 16:30:40,463] org.whispersystems.textsecuregcm.auth.AccountAuthenticator: account for +306949193033 ispresent false
+62.74.10.171 - - [04/Mar/2020:16:30:40 +0000] "PUT /v1/directory/tokens HTTP/1.1" 401 49 "-" "okhttp/3.8.1" 22
+INFO  [2020-03-04 16:30:43,056] org.whispersystems.textsecuregcm.auth.AccountAuthenticator: account for +306949193033 ispresent false
+62.74.10.171 - - [04/Mar/2020:16:30:43 +0000] "PUT /v1/accounts/gcm/ HTTP/1.1" 401 49 "-" "okhttp/3.8.1" 8
+INFO  [2020-01-30 14:54:29,199] org.whispersystems.textsecuregcm.auth.AccountAuthenticator: account for +306944125708 ispresent true
+62.74.14.183 - - [30/Jan/2020:14:54:29 +0000] "GET /v1/accounts/turn HTTP/1.1" 200 168 "-" "okhttp/3.8.1" 72

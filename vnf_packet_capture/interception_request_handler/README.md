@@ -1,29 +1,28 @@
-# Interception Data Agent description
-The "Interception Data Agent" is a software developed in the Astrid Project. 
-The code is used to retrieve information about VoIP (calls information and interception), 
-following of a LEA (Law Enforcement Agency) request. 
-The interception software makes use of SeVoC (VoIP) and Polycube PacketCapture.
+# Interception Request Handler description
+The "Interception Request Handler" is a software developed in the Astrid Project. 
+The code is used to receive request of interception by LEA (Law Enforcement Agency) and send an active/deactive command to the "Interception Core Handler", using Context-Broker API
 
 ## Table of Contents
-- [Interception Data Agent]
 - [Architecture description]
 - [Installation]
+- [Configuration]
 - [Usage]
 
 # Architecture description
 
-This code implements "INTERCEPTION" agent on the Virtual Network Function (VNF) side.
+This code implements "INTERCEPTION HANDLER" agent on Security Controller.
 
 ```
        VNF          +        ContextBroker     +     SecurityController
                     |                          |
 +--------------+    |  +-------------+         |     +-----------------+
-| LocalManager |    |  |    Kafka    |         |     |      IADMF      |
-+--------------+    |  +-------------+         |     +-----------------+
-                    |                          |
+| LocalManager |    |  |    Kafka    |         |     |  INTERCEPTION   |
++--------------+    |  +-------------+         |     |     HANDLER     |
+                    |                          |     +-----------------+
 |--------------|    |  |-------------|         |
-| INTERCEPTION |    |  |   Logstash  |         |
-|--------------|    |  |-------------|         |
+| Interception |    |  |   Logstash  |         |
+| Core Handler |    |  |-------------|         |
+|--------------|    |                          |
                     |                          |
 |--------------|    |  |----------------|      |
 |   Logstash   |    |  | ContextManager |      |
@@ -35,29 +34,43 @@ This code implements "INTERCEPTION" agent on the Virtual Network Function (VNF) 
                     |                          | 
 ```
 
-"INTERCEPTION" agent is composed by three modules:
-- a "REST SERVER" to receive request as "start interception"/"stop interception" with user-ID 
-  of user to be intercepted
-- an "IP ADDRESS/PORT FETCHER" : using user-ID and "VoIP Ubitech software" log, it fetches 
-  ip address/port (src/dst) of user to be intercepted
-- "POLYCUBE HANDLER" is used to set parameters to Polycube ("packetcapture") and start/stop 
-  interception
+"Interception Request Handler" acts as a proxy server: receive requests from LEA and move
+them to the "Interception Core Handler" using the "Context Broker API"
 
 # Installation
 
 1. Prerequisite
 - Python3
+- pip3
 
 2. Clone the repository
 
 ```bash
 git clone https://gitlab.com/astrid-repositories/wp2/interception-data-agent.git
-cd context-broker-apis
+```
+
+3. Install
+```bash
+cd interception-data-agent\interception_request_handler
+./scripts/install.sh
+```
+
+# Configuration
+The software configuration can be done using the file "configurationFile.conf" in the "config" folder (interception-data-agent/interception_request_handler/config/configurationFile.conf).
+The configuration file is in JSON format.
+All parameters are in the "parameters" scope.
+Following is the description of every field:
+
+```
+- loggerLevel : set up the level of debug between "INFO", "WARN", "DEBUG", "ERROR"
+- restServer : IP address and port on which program receives interception requests from LEA
+- contextBroker : IP address and port of the "Context Broker API"
 ```
 
 # Usage
 
 ```bash
-python3 interceptionMain.py
+cd interception-data-agent\interception_request_handler
+./scripts/run.sh
 ```
 
