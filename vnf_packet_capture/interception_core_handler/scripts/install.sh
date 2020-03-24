@@ -121,14 +121,14 @@ else
 fi
 
 # download git repository
-if [ ! -d .git ]; then
-    echo Clone repository
-    rm -rf env/lcp
-    git clone https://astrid-dev:PDskARWrfWHSxJtk9yzQ@gitlab.com/astrid-repositories/wp2/interception-data-agent.git
-else
-    echo Pull repository
-    git pull origin master
-fi
+#if [ ! -d .git ]; then
+#    echo Clone repository
+#    rm -rf env/lcp
+#    git clone https://astrid-dev:PDskARWrfWHSxJtk9yzQ@gitlab.com/astrid-repositories/wp2/interception-data-agent.git
+#else
+#    echo Pull repository
+#    git pull origin master
+#fi
 
 
 # fill parameters in configuration file
