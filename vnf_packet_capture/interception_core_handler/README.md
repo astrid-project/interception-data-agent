@@ -58,7 +58,7 @@ git clone https://gitlab.com/astrid-repositories/wp2/interception-data-agent.git
 3. Install
 
 ```
-cd interception-data-agent\interception_core_handler
+cd interception-data-agent/interception_core_handler
 ./scripts/install.sh
 ```
 
@@ -84,7 +84,7 @@ Following is the description of every field:
 # Usage
 
 ```bash
-cd interception-data-agent\interception_core_handler
+cd interception-data-agent/interception_core_handler
 ./scripts/run.sh
 ```
 
