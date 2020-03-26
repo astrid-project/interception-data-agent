@@ -57,12 +57,15 @@ git clone https://gitlab.com/astrid-repositories/wp2/interception-data-agent.git
 
 3. Install
 
-```
+```bash
 cd interception-data-agent/interception_core_handler
-./scripts/install.sh
+bash ./scripts/install.sh
 ```
 
 # Configuration
+There are two methods to set up "Interception Core Handler": modifing directly the configuration file or using the configuration script.
+
+## Configuration by file
 The software configuration can be done using the file "configurationFile.conf" in the "config" folder (interception-data-agent/interception_core_handler/config/configurationFile.conf).
 The configuration file is in JSON format.
 All parameters are in the "parameters" scope.
@@ -81,10 +84,43 @@ Following is the description of every field:
 - interceptionTools : specify what tool use to VoIP interception. Set flag between "true" (in use) and "false" (not in use)
 ```
 
+## Configuration by script
+Use the script ("configure.sh") in "./scripts" folder
+
+```bash
+cd interception-data-agent/interception_core_handler
+bash ./scripts/configure.sh -h
+```
+
+```bash
+-h                    Display this message
+-d DEBUG_LEVEL        Debug level: INFO, WARN, DEBUG (default), ERROR
+-i INTERFACE          Interface used to capture VoIP traffic,
+                          empty value (default) is for "all interfaces"
+-p PATH               Path where interceptions are saved
+-a REST_IP            IP address of local REST listen server,
+                          default "0.0.0.0", all addresses
+-b REST_PORT          Port of local REST listen server, default 5003
+-e POLYCUBE_IP        Local Polycube IP address, default "127.0.0.1"
+-f POLYCUBE_PORT      Local Polycube port, default 9000
+-g KAFKA_IP           Kafka IP address, default is empty value, not used
+-k KAFKA_PORT         Kafka port, default is 5002
+-m LOG_PATH           Path of VoIP log file (folder)
+-p LOG_FILENAME       Name of VoIP log file
+-t LOG_READ_TIME      Timeout for execution of one VoIP log file reading cycle
+-u ENABLE_POLYCUBE    Enable/disable Polycube PacketCapture for interception,
+                          allowed values: true (active) / false (deactive - default)
+-z ENABLE_LIBPCAP     Enable/disable Libpcap for interception,
+                          allowed values: true (active - default) / false (deactive)
+
+* If not specified, default value is used*
+
+```
+
 # Usage
 
 ```bash
 cd interception-data-agent/interception_core_handler
-./scripts/run.sh
+bash ./scripts/run.sh
 ```
 

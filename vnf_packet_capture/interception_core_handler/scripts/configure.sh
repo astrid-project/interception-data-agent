@@ -30,7 +30,7 @@ help() {
     echo "-e POLYCUBE_IP        Local Polycube IP address, default \"127.0.0.1\""
     echo "-f POLYCUBE_PORT      Local Polycube port, default 9000"
     echo "-g KAFKA_IP           Kafka IP address, default is empty value, not used"
-    echo "-h KAFKA_PORT         Kafka port, default is 5002"
+    echo "-k KAFKA_PORT         Kafka port, default is 5002"
     echo "-m LOG_PATH           Path of VoIP log file (folder)"
     echo "-p LOG_FILENAME       Name of VoIP log file"
     echo "-t LOG_READ_TIME      Timeout for execution of one VoIP log file reading cycle"
@@ -41,65 +41,66 @@ help() {
     echo ""
     echo "* If not specified, default value is used*"
     echo ""
-    exit $1
 }
 # load data from parameters
-while getopts ":hd:i:p:a:b:e:f:g:h:m:p:t:u:z:" opt; do
+while getopts ":hd:i:p:a:b:e:f:g:k:m:p:t:u:z:" args; do
     case ${args} in
-        h )
-            help 0
+        h)
+            help
             ;;
-        d ) 
-            logger_level = $OPTARG
+        d) 
+            logger_level=$OPTARG
             ;;
-        i ) 
-            interface = $OPTARG
+        i) 
+            interface=$OPTARG
             ;;
-        p ) 
-            interception_path = $OPTARG
+        p) 
+            interception_path=$OPTARG
             ;;
-        a ) 
-            rest_server_address = $OPTARG
+        a) 
+            rest_server_address=$OPTARG
             ;;
-        b ) 
-            rest_server_port = $OPTARG
+        b) 
+            rest_server_port=$OPTARG
             ;;
-        e ) 
-            polycube_address = $OPTARG
+        e) 
+            polycube_address=$OPTARG
             ;;
-        f ) 
-            polycube_port = $OPTARG
+        f) 
+            polycube_port=$OPTARG
             ;;
-        g ) 
-            kafka_address = $OPTARG
+        g) 
+            kafka_address=$OPTARG
             ;;
-        h ) 
-            kafka_port = $OPTARG
+        k) 
+            kafka_port=$OPTARG
             ;;
-        m ) 
-            log_voip_path = $OPTARG
+        m) 
+            log_voip_path=$OPTARG
             ;;
-        p ) 
-            log_voip_file_name = $OPTARG
+        p) 
+            log_voip_file_name=$OPTARG
             ;;
-        t ) 
-            log_voip_reading_time = $OPTARG
+        t) 
+            log_voip_reading_time=$OPTARG
             ;;
-        u ) 
-            polycube_is_enabled = $OPTARG
+        u) 
+            polycube_is_enabled=$OPTARG
             ;;
-        z )  
-            libpcap_is_enabled = $OPTARG
+        z)  
+            libpcap_is_enabled=$OPTARG
             ;;
-        \? )
+        \?)
             echo "Error: Invalid argument : ${args}"
             echo ""
-            help 1
+            help
+            exit 1
             ;;
-        : )
+        :)
             echo "Error: $OPTARG requires argument"
             echo ""
-            help 1
+            help
+            exit 1
             ;;
     esac
 done
@@ -117,26 +118,26 @@ done
 # fill parameters in configuration file
 if [ -f ./config/base.conf ]; then
     cp ./config/base.conf ./config/configurationFile.conf
-    sed -i 's/\@LOGGERLEVEL/${logger_level}' ./config/configurationfile.conf
-    sed -i 's/\@INTERFACE/${interface}' ./config/configurationfile.conf
-    sed -i 's/\@INTERCEPTIONPATH/${interception_path}' ./config/configurationfile.conf
-    sed -i 's/\@RESTSERVERADDRESS/${rest_server_address}' ./config/configurationfile.conf
-    sed -i 's/\@RESTSERVERPORT/${rest_server_port}' ./config/configurationfile.conf
-    sed -i 's/\@POLYCUBEADDRESS/${polycube_address}' ./config/configurationfile.conf
-    sed -i 's/\@POLYCUBEPORT/${polycube_port}' ./config/configurationfile.conf
-    sed -i 's/\@KAFKAADDRESS/${kafka_address}' ./config/configurationfile.conf
-    sed -i 's/\@KAFKAPORT/${kafka_port}' ./config/configurationfile.conf
-    sed -i 's/\@LOGVOIPPATH/${log_voip_path}' ./config/configurationfile.conf
-    sed -i 's/\@LOGVOIPFILENAME/${log_voip_file_name}' ./config/configurationfile.conf
-    sed -i 's/\@LOGVOIPREADINGTIME/${log_voip_reading_time}' ./config/configurationfile.conf
-    sed -i 's/\@POLYCUBEISENABLED/${polycube_is_enabled}' ./config/configurationfile.conf
-    sed -i 's/\@LIBPCAPISENABLED/${libpcap_is_enabled}' ./config/configurationfile.conf
+    sed -i "s#\@LOGGERLEVEL#${logger_level}#" ./config/configurationFile.conf
+    sed -i "s#\@INTERFACE#${interface}#" ./config/configurationFile.conf
+    sed -i "s#\@INTERCEPTIONPATH#${interception_path}#" ./config/configurationFile.conf
+    sed -i "s#\@RESTSERVERADDRESS#${rest_server_address}#" ./config/configurationFile.conf
+    sed -i "s#\@RESTSERVERPORT#${rest_server_port}#" ./config/configurationFile.conf
+    sed -i "s#\@POLYCUBEADDRESS#${polycube_address}#" ./config/configurationFile.conf
+    sed -i "s#\@POLYCUBEPORT#${polycube_port}#" ./config/configurationFile.conf
+    sed -i "s#\@KAFKAADDRESS#${kafka_address}#" ./config/configurationFile.conf
+    sed -i "s#\@KAFKAPORT#${kafka_port}#" ./config/configurationFile.conf
+    sed -i "s#\@LOGVOIPPATH#${log_voip_path}#" ./config/configurationFile.conf
+    sed -i "s#\@LOGVOIPFILENAME#${log_voip_file_name}#" ./config/configurationFile.conf
+    sed -i "s#\@LOGVOIPREADINGTIME#${log_voip_reading_time}#" ./config/configurationFile.conf
+    sed -i "s#\@POLYCUBEISENABLED#${polycube_is_enabled}#" ./config/configurationFile.conf
+    sed -i "s#\@LIBPCAPISENABLED#${libpcap_is_enabled}#" ./config/configurationFile.conf
 else
     echo "Error: ./config/base.conf does not exist"
     exit 1
+fi
 
-
-
+exit 0
 
 
 

@@ -32,7 +32,7 @@ class ConfigurationManager():
     def __init__( 
             self, 
             configFileName = "configurationFile.conf",
-            configFilePath = "./" 
+            configFilePath = "./config/" 
         ):
         self.logger = ""
         self.configFileName = configFileName

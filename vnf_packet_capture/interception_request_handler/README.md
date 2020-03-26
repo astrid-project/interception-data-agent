@@ -52,10 +52,13 @@ git clone https://gitlab.com/astrid-repositories/wp2/interception-data-agent.git
 3. Install
 ```bash
 cd interception-data-agent/interception_request_handler
-./scripts/install.sh
+bash ./scripts/install.sh
 ```
 
 # Configuration
+There are two methods to set up "Interception Request Handler": modifing directly the configuration file or using the configuration script.
+
+## Configuration by file
 The software configuration can be done using the file "configurationFile.conf" in the "config" folder (interception-data-agent/interception_request_handler/config/configurationFile.conf).
 The configuration file is in JSON format.
 All parameters are in the "parameters" scope.
@@ -67,10 +70,33 @@ Following is the description of every field:
 - contextBroker : IP address and port of the "Context Broker API"
 ```
 
+## Configuration by script
+Use the script ("configure.sh") in "./scripts" folder
+
+```bash
+cd interception-data-agent/interception_request_handler
+bash ./scripts/configure.sh -h
+```
+
+```bash
+-h                    Display this message
+-d DEBUG_LEVEL        Debug level: INFO, WARN, DEBUG (default), ERROR
+-a REST_IP            IP address of local REST listen server,
+                          default "0.0.0.0", all addresses
+-b REST_PORT          Port of local REST listen server, default 5003
+-e CONTEXTBROKER_IP   Local ContextBroker IP address, default value is empty
+-f CONTEXTBROKER_PORT Local ContextBroker port, default value is empty
+-u USER               User to use to connect to ContextBroker, default value is "astrid"
+-p PASSWORD           Password to use to connect to ContextBroker
+
+* If not specified, default value is used*
+
+```
+
 # Usage
 
 ```bash
 cd interception-data-agent/interception_request_handler
-./scripts/run.sh
+bash ./scripts/run.sh
 ```
 

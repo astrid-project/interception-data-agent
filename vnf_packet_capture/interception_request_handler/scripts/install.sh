@@ -13,7 +13,7 @@ if [ ! $(type -p pip3) ]; then
     echo ""
     exit 1
 else
-    pip3 install -r ./scripts/requirements.txt
+    pip3 install -r ./requirements.txt
 fi
 
 # download git repository
@@ -26,3 +26,4 @@ fi
 #    git pull origin master
 #fi
 
+exit 0

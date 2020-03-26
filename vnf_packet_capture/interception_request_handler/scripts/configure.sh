@@ -26,44 +26,45 @@ help() {
     echo ""
     echo "* If not specified, default value is used*"
     echo ""
-    exit $1
 }
 # load data from parameters
-while getopts ":hd:i:p:a:b:e:f:u:p:" opt; do
+while getopts ":hd:i:p:a:b:e:f:u:p:" args; do
     case ${args} in
-        h )
-            help 0
+        h)
+            help
             ;;
-        d ) 
-            logger_level = $OPTARG
+        d) 
+            logger_level=$OPTARG
             ;;
-        a ) 
-            rest_server_address = $OPTARG
+        a) 
+            rest_server_address=$OPTARG
             ;;
-        b ) 
-            rest_server_port = $OPTARG
+        b) 
+            rest_server_port=$OPTARG
             ;;
-        e ) 
-            contextbroker_address = $OPTARG
+        e) 
+            contextbroker_address=$OPTARG
             ;;
-        f ) 
-            contextbroker_port = $OPTARG
+        f) 
+            contextbroker_port=$OPTARG
             ;;
-        u ) 
-            contextbroker_user = $OPTARG
+        u) 
+            contextbroker_user=$OPTARG
             ;;
-        p ) 
-            contextbroker_password = $OPTARG
+        p) 
+            contextbroker_password=$OPTARG
             ;;
-        \? )
+        \?)
             echo "Error: Invalid argument : ${args}"
             echo ""
-            help 1
+            help
+            exit 1
             ;;
-        : )
+        :)
             echo "Error: $OPTARG requires argument"
             echo ""
-            help 1
+            help
+            exit 1
             ;;
     esac
 done
@@ -81,14 +82,17 @@ done
 
 # fill parameters in configuration file
 if [ -f ./config/base.conf ]; then
-    cp ./config/base.conf .config/configurationFile.conf
-    sed -i 's/\@LOGGERLEVEL/${logger_level}' ./config/configurationfile.conf
-    sed -i 's/\@RESTSERVERADDRESS/${rest_server_address}' ./config/configurationfile.conf
-    sed -i 's/\@RESTSERVERPORT/${rest_server_port}' ./config/configurationfile.conf
-    sed -i 's/\@CONTEXTBROKERADDRESS/${contextbroker_address}' ./config/configurationfile.conf
-    sed -i 's/\@CONTEXTBROKERPORT/${contextbroker_port}' ./config/configurationfile.conf
-    sed -i 's/\@CONTEXTBROKERUSER/${contextbroker_user}' ./config/configurationfile.conf
-    sed -i 's/\@CONTEXTBROKERPASSWORD/${contextbroker_password}' ./config/configurationfile.conf
+    cp ./config/base.conf ./config/configurationFile.conf
+    sed -i "s#\@LOGGERLEVEL#${logger_level}#" ./config/configurationFile.conf
+    sed -i "s#\@RESTSERVERADDRESS#${rest_server_address}#" ./config/configurationFile.conf
+    sed -i "s#\@RESTSERVERPORT#${rest_server_port}#" ./config/configurationFile.conf
+    sed -i "s#\@CONTEXTBROKERADDRESS#${contextbroker_address}#" ./config/configurationFile.conf
+    sed -i "s#\@CONTEXTBROKERPORT#${contextbroker_port}#" ./config/configurationFile.conf
+    sed -i "s#\@CONTEXTBROKERUSER#${contextbroker_user}#" ./config/configurationFile.conf
+    sed -i "s#\@CONTEXTBROKERPASSWORD#${contextbroker_password}#" ./config/configurationFile.conf
 else
     echo "Error: ./config/base.conf does not exist"
     exit 1
+fi
+
+exit 0
