@@ -3,14 +3,13 @@ The "Interception Core Handler" is used to retrieve information about VoIP (call
 and interception), following of a LEA (Law Enforcement Agency) request. 
 Interception software makes use of SeVoC (VoIP) and Polycube PacketCapture.
 
-# Table of Contents
-- [Architectural description]
-- [Installation]
-- [Configuration]
-- [Usage]
+## Table of Contents
+- [Architectural description](#architectural-description)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Usage](#usage)
 
 # Architectural description
-
 This code implements "INTERCEPTION" agent (Interception Core Handler) on the Virtual Network 
 Function (VNF) side.
 
@@ -44,10 +43,10 @@ Function (VNF) side.
   interception
 
 # Installation
-
 1. Prerequisite
-- Python3
-- pip3
+
+- `Python3`
+- `pip3`
 
 2. Clone the repository
 
@@ -63,7 +62,7 @@ bash ./scripts/install.sh
 ```
 
 # Configuration
-There are two methods to set up "Interception Core Handler": modifing directly the configuration file or using the configuration script.
+There are two methods to set up "Interception Core Handler": modifing directly the [configuration file](#configuration-by-file) or using the [configuration script](#configuration-by-script).
 
 ## Configuration by file
 The software configuration can be done using the file "configurationFile.conf" in the "config" folder (interception-data-agent/interception_core_handler/config/configurationFile.conf).

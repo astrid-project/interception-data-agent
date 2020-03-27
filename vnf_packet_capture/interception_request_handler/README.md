@@ -3,14 +3,13 @@ The "Interception Request Handler" is a software developed in the Astrid Project
 The code is used to receive request of interception by LEA (Law Enforcement Agency) and send an active/deactive command to the "Interception Core Handler", using Context-Broker API
 
 ## Table of Contents
-- [Architecture description]
-- [Installation]
-- [Configuration]
-- [Usage]
+- [Architecture description](#architectural-description)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Usage](#usage)
 
 # Architecture description
-
-This code implements "INTERCEPTION HANDLER" agent on Security Controller.
+This code implements "INTERCEPTION HANDLER" agent ("Interception Request Handler") on Security Controller.
 
 ```
        VNF          +        ContextBroker     +     SecurityController
@@ -38,8 +37,8 @@ This code implements "INTERCEPTION HANDLER" agent on Security Controller.
 them to the "Interception Core Handler" using the "Context Broker API"
 
 # Installation
-
 1. Prerequisite
+
 - Python3
 - pip3
 
@@ -50,13 +49,14 @@ git clone https://gitlab.com/astrid-repositories/wp2/interception-data-agent.git
 ```
 
 3. Install
+
 ```bash
 cd interception-data-agent/interception_request_handler
 bash ./scripts/install.sh
 ```
 
 # Configuration
-There are two methods to set up "Interception Request Handler": modifing directly the configuration file or using the configuration script.
+There are two methods to set up "Interception Request Handler": modifing directly the [configuration file](#configuration-by-file) or using the [configuration script](#configuration-by-script).
 
 ## Configuration by file
 The software configuration can be done using the file "configurationFile.conf" in the "config" folder (interception-data-agent/interception_request_handler/config/configurationFile.conf).
