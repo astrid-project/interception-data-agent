@@ -7,6 +7,7 @@ info: guerino.lamanna@infocomgenova.it
 
 from enum import Enum
 from myLogger import MyLogger
+from IPy import IP
 
 class EventType( Enum ) :
     Undefined = 0
@@ -46,7 +47,7 @@ class ParsingHandler() :
         self.serviceID = serviceID
 
         # data used for parsing
-        self.__readUserIPNow = False
+        self.__readUserIP = ""
         
         try :
             self.fp = open( self.filePath + self.fileName , "r" )
@@ -87,39 +88,42 @@ class ParsingHandler() :
     it returns True if it find out some events, False if it doesn't
     ::
     example::
-    INFO  [2020-01-30 14:54:29,199] org.whispersystems.textsecuregcm.auth.AccountAuthenticator: account for +306944125708 ispresent true
     62.74.14.183 - - [30/Jan/2020:14:54:29 +0000] "GET /v1/accounts/turn HTTP/1.1" 200 168 "-" "okhttp/3.8.1" 72
+    INFO  [2020-01-30 14:54:29,199] org.whispersystems.textsecuregcm.auth.AccountAuthenticator: account for +306944125708 ispresent true
     """
     def __findOutChangeInterceptedIPParametersEvent( self, line = "" ) :
         if line != "" :
-            if "org.whispersystems.textsecuregcm.auth.AccountAuthenticator:" in line :
-                if "ispresent true" in line :
-                    elems = line.split()
-                    isUserIdFound = 0
-                    for elem in elems :
-                        if isUserIdFound == 1 and elem == "for" :
-                            isUserIdFound = 2
-                            continue
-                        if isUserIdFound == 2 :
-                            if elem == self.userID :
-                                self.logger.debug( " (1) UserID \"%s\" FOUND", str( self.userID ) )
-                                # mark to read userID in the next parsing line
-                                self.__readUserIPNow = True
-                            return False
-                        if elem == "account" :
-                            isUserIdFound = 1
-            if self.__readUserIPNow :
-                self.__readUserIPNow = False
-                # create event
-                elems = line.split()
-                # the first elem of the line is the userIP
-                userIP = elems[0]
-                self.logger.debug( " (2) User IP \"%s\" FOUND for User-ID \"%s\"", str( userIP ), str( self.userID ) )
-                event = Event( EventType.InterceptedIPParameters )
-                event.data[ "srcAddress" ] = userIP
-                self.events.add( event )
-                return True
-
+            elems = line.split()
+            try :
+                # check if first word is an IP address
+                IP( elems[0] )
+                self.__readUserIP = elems[0]
+                self.logger.debug( " (1) Candidate user IP \"%s\" FOUND for User-ID \"%s\"", str( elems[0] ), str( self.userID ) )
+                                    
+                # Return False because algorithm is not complete
+                # Now it search for "or.whispersystems...AccountAuthenticator" string
+                return False
+            except Exception as e :
+                # this is the case when elems[0] is not an IP address
+                if "org.whispersystems.textsecuregcm.auth.AccountAuthenticator:" in line :
+                    if "ispresent true" in line :
+                        isUserIdFound = 0
+                        for elem in elems :
+                            if isUserIdFound == 1 and elem == "for" :
+                                isUserIdFound = 2
+                                continue
+                            if isUserIdFound == 2 :
+                                if elem == self.userID :
+                                    event = Event( EventType.InterceptedIPParameters )
+                                    event.data[ "srcAddress" ] = self.__readUserIP
+                                    self.events.add( event )
+                                    self.__readUserIP = ""
+                                    self.logger.debug( " (2) UserIP \"%s\" FOUND for userID \"%s\"", 
+                                        str( event.data[ "srcAddress" ] ), str( self.userID ) )
+                                    return True
+                                return False
+                            if elem == "account" :
+                                isUserIdFound = 1
         return False
 
     """
