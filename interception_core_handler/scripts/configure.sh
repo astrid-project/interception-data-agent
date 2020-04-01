@@ -5,14 +5,15 @@
 logger_level="DEBUG"
 interface=""
 interception_path="./interceptions/"
-rest_server_address="0.0.0.0"
+rest_server_address=""
 rest_server_port=5003
 polycube_address="127.0.0.1"
 polycube_port=9000
 kafka_address=""
 kafka_port=5002
-log_voip_path="./"
-log_voip_file_name="containersLogs.log"
+kafka_topic="interception"
+log_voip_path="./logs/"
+log_voip_file_name="containerLogs.log"
 log_voip_reading_time=0.5
 polycube_is_enabled=false
 libpcap_is_enabled=true
@@ -25,12 +26,13 @@ help() {
     echo "                          empty value (default) is for \"all interfaces\""
     echo "-p PATH               Path where interceptions are saved"
     echo "-a REST_IP            IP address of local REST listen server, "
-    echo "                          default \"0.0.0.0\", all addresses"
+    echo "                          default is empty value"
     echo "-b REST_PORT          Port of local REST listen server, default 5003"
     echo "-e POLYCUBE_IP        Local Polycube IP address, default \"127.0.0.1\""
     echo "-f POLYCUBE_PORT      Local Polycube port, default 9000"
     echo "-g KAFKA_IP           Kafka IP address, default is empty value, not used"
     echo "-k KAFKA_PORT         Kafka port, default is 5002"
+    echo "-w KAFKA_TOPIC        Kafka topic used for communication with Kafka broker"
     echo "-m LOG_PATH           Path of VoIP log file (folder)"
     echo "-p LOG_FILENAME       Name of VoIP log file"
     echo "-t LOG_READ_TIME      Timeout for execution of one VoIP log file reading cycle"
@@ -43,7 +45,7 @@ help() {
     echo ""
 }
 # load data from parameters
-while getopts ":hd:i:p:a:b:e:f:g:k:m:p:t:u:z:" args; do
+while getopts ":hd:i:p:a:b:e:f:g:k:w:m:p:t:u:z:" args; do
     case ${args} in
         h)
             help
@@ -74,6 +76,9 @@ while getopts ":hd:i:p:a:b:e:f:g:k:m:p:t:u:z:" args; do
             ;;
         k) 
             kafka_port=$OPTARG
+            ;;
+        w)
+            kafka_topic=$OPTARG
             ;;
         m) 
             log_voip_path=$OPTARG
@@ -127,6 +132,7 @@ if [ -f ./config/base.conf ]; then
     sed -i "s#\@POLYCUBEPORT#${polycube_port}#" ./config/configurationFile.conf
     sed -i "s#\@KAFKAADDRESS#${kafka_address}#" ./config/configurationFile.conf
     sed -i "s#\@KAFKAPORT#${kafka_port}#" ./config/configurationFile.conf
+    sed -i "s#\@KAFKATOPIC#${kafka_topic}#" ./config/configurationFile.conf
     sed -i "s#\@LOGVOIPPATH#${log_voip_path}#" ./config/configurationFile.conf
     sed -i "s#\@LOGVOIPFILENAME#${log_voip_file_name}#" ./config/configurationFile.conf
     sed -i "s#\@LOGVOIPREADINGTIME#${log_voip_reading_time}#" ./config/configurationFile.conf

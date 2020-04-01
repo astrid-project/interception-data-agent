@@ -14,7 +14,8 @@ def main() :
 
     try :
         restServer = RestServer( confBox.getRestServerAddress(), confBox.getRestServerPort(),
-            confBox.getContextBrokerAddress(), confBox.getContextBrokerPort() )
+            confBox.getContextBrokerAddress(), confBox.getContextBrokerPort(),
+            confBox.getKafkaServerAddress(), confBox.getKafkaServerPort(), confBox.getKafkaServerTopic() )
         restServer.run()
     except Exception as e :
         logger.error( e )

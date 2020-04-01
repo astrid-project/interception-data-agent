@@ -70,7 +70,7 @@ class ParsingHandler() :
             if self.fp :
                 line = self.fp.readline()
                 if not line :
-                    self.logger.debug( "end of file" )
+                    # self.logger.debug( "end of file" )
                     break
                 #self.logger.debug( "read line: %s", line )
 

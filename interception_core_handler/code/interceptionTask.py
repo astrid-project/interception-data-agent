@@ -101,7 +101,7 @@ class InterceptionTask( threading.Thread ):
            
             else :
                 # if not event, wait for a time
-                self.logger.warn( "sleep for: %s", str( self.readVoIPLogTimeout ) )
+                # self.logger.warn( "sleep for: %s", str( self.readVoIPLogTimeout ) )
                 time.sleep( self.readVoIPLogTimeout )
 
         # When main thread is stopped, the Polycube Packetcapture is removed

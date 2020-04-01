@@ -5,10 +5,11 @@
 logger_level="DEBUG"
 rest_server_address="0.0.0.0"
 rest_server_port=5003
-polycube_address="127.0.0.1"
-polycube_port=9000
+kafka_address=""
+kafka_port=5002
+kafka_topic="interception"
 contextbroker_address=""
-contextbroker_port=""
+contextbroker_port=0
 contextbroker_user="astrid"
 contextbroker_password=""
 
@@ -19,6 +20,9 @@ help() {
     echo "-a REST_IP            IP address of local REST listen server, "
     echo "                          default \"0.0.0.0\", all addresses"
     echo "-b REST_PORT          Port of local REST listen server, default 5003"
+    echo "-g KAFKA_IP           Kafka IP address, default is empty value, not used"
+    echo "-k KAFKA_PORT         Kafka port, default is 5002"
+    echo "-w KAFKA_TOPIC        Kafka topic used for communication with Kafka broker"
     echo "-e CONTEXTBROKER_IP   Local ContextBroker IP address, default value is empty"
     echo "-f CONTEXTBROKER_PORT Local ContextBroker port, default value is empty"
     echo "-u USER               User to use to connect to ContextBroker, default value is \"astrid\""
@@ -28,7 +32,7 @@ help() {
     echo ""
 }
 # load data from parameters
-while getopts ":hd:i:p:a:b:e:f:u:p:" args; do
+while getopts ":hd:i:p:a:b:g:k:w:e:f:u:p:" args; do
     case ${args} in
         h)
             help
@@ -41,6 +45,15 @@ while getopts ":hd:i:p:a:b:e:f:u:p:" args; do
             ;;
         b) 
             rest_server_port=$OPTARG
+            ;;
+        g)
+            kafka_address=$OPTARG
+            ;;
+        k)
+            kafka_port=$OPTARG
+            ;;
+        w)
+            kafka_topic=$OPTARG
             ;;
         e) 
             contextbroker_address=$OPTARG
@@ -86,6 +99,9 @@ if [ -f ./config/base.conf ]; then
     sed -i "s#\@LOGGERLEVEL#${logger_level}#" ./config/configurationFile.conf
     sed -i "s#\@RESTSERVERADDRESS#${rest_server_address}#" ./config/configurationFile.conf
     sed -i "s#\@RESTSERVERPORT#${rest_server_port}#" ./config/configurationFile.conf
+    sed -i "s#\@KAFKAADDRESS#${kafka_address}#" ./config/configurationFile.conf
+    sed -i "s#\@KAFKAPORT#${kafka_port}#" ./config/configurationFile.conf
+    sed -i "s#\@KAFKATOPIC#${kafka_topic}#" ./config/configurationFile.conf
     sed -i "s#\@CONTEXTBROKERADDRESS#${contextbroker_address}#" ./config/configurationFile.conf
     sed -i "s#\@CONTEXTBROKERPORT#${contextbroker_port}#" ./config/configurationFile.conf
     sed -i "s#\@CONTEXTBROKERUSER#${contextbroker_user}#" ./config/configurationFile.conf

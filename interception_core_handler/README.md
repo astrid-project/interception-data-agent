@@ -98,12 +98,13 @@ bash ./scripts/configure.sh -h
                           empty value (default) is for "all interfaces"
 -p PATH               Path where interceptions are saved
 -a REST_IP            IP address of local REST listen server,
-                          default "0.0.0.0", all addresses
+                          default is empty value
 -b REST_PORT          Port of local REST listen server, default 5003
 -e POLYCUBE_IP        Local Polycube IP address, default "127.0.0.1"
 -f POLYCUBE_PORT      Local Polycube port, default 9000
 -g KAFKA_IP           Kafka IP address, default is empty value, not used
 -k KAFKA_PORT         Kafka port, default is 5002
+-w KAFKA_TOPIC        Kafka topic used for communication with Kafka broker
 -m LOG_PATH           Path of VoIP log file (folder)
 -p LOG_FILENAME       Name of VoIP log file
 -t LOG_READ_TIME      Timeout for execution of one VoIP log file reading cycle
@@ -113,6 +114,7 @@ bash ./scripts/configure.sh -h
                           allowed values: true (active - default) / false (deactive)
 
 * If not specified, default value is used*
+
 
 ```
 

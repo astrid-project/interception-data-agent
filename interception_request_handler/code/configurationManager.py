@@ -36,6 +36,7 @@ class ConfigurationManager():
         # buffer to save configuration parameters 
         self.loggerLevel = logging.DEBUG
         self.restServerParams = {} # "address" and "port"
+        self.kafkaServerParams = {} # "address", "port" and "topic"
         self.contextBrokerParams = {} # "address", "port", "user", "password"
 
         try:
@@ -71,6 +72,15 @@ class ConfigurationManager():
                 self.logger.debug( "REST server address: %s, port: %s", 
                     str( self.restServerParams[ "address" ] ), 
                     str( self.restServerParams[ "port" ] ) )
+            kafkaServer = parameters.get( "kafkaServer", "" )
+            if kafkaServer != "" :
+                self.kafkaServerParams[ "address" ] = kafkaServer.get( "address", "" )
+                self.kafkaServerParams[ "port" ] = kafkaServer.get( "port", "" )
+                self.kafkaServerParams[ "topic" ] = kafkaServer.get( "topic", "" )
+                self.logger.debug( "Kafka server address: %s, port: %s, topic: %s",
+                    str( self.kafkaServerParams[ "address" ] ),
+                    str( self.kafkaServerParams[ "port" ] ),
+                    str( self.kafkaServerParams[ "topic" ] ) )
             contextBroker = parameters.get( "contextBroker", "" )
             if contextBroker != "" :
                 self.contextBrokerParams[ "address" ] = contextBroker.get( "address", "" )
@@ -92,6 +102,15 @@ class ConfigurationManager():
 
     def getRestServerPort( self ) :
         return self.restServerParams[ "port" ]
+
+    def getKafkaServerAddress( self ) :
+        return self.kafkaServerParams[ "address" ]
+
+    def getKafkaServerPort( self ) :
+        return self.kafkaServerParams[ "port" ]
+
+    def getKafkaServerTopic( self ) :
+        return self.kafkaServerParams[ "topic" ]
 
     def getContextBrokerAddress( self ) :
         return self.contextBrokerParams[ "address" ]

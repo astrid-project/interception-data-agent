@@ -107,7 +107,8 @@ class TcpdumpHandler() :
             # check if "tcpdump" process is yet running
             if tcpdumpProcess.poll() == None :
                 # terminate the "tcpdump" process
-                tcpdumpProcess.terminate()
+                # tcpdumpProcess.terminate()
+                tcpdumpProcess.kill()
             return True
 
         return False

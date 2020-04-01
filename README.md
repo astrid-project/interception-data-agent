@@ -19,12 +19,12 @@ The interception software makes use of SeVoC (VoIP) and Polycube PacketCapture.
 # Architectural description
 
 ```
-       VNF          +    ContextBroker     +           ___LEA requests
+       VNF          +  SecurityController  +           ___LEA requests
     (Exec-env)      |                      |          / 
                     |                      |         \/
 +--------------+    |  +-------------+     |     +-----------------+
-| Interception |    |  |   Context   |     |     |  Interception   |
-|     Core     | <---- |    Broker   | <-------- |     Request     |
+| Interception |    |  |  Security   |     |     |  Interception   |
+|     Core     | <---- |  Controller | <-------- |     Request     |
 |    Handler   |    |  +-------------|     |     |     Handler     |
 +--------------+    |                      |     +-----------------+
                     |                      |

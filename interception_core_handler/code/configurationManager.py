@@ -97,9 +97,11 @@ class ConfigurationManager():
             if kafkaServer != "" :
                 self.kafkaServerParams[ "address" ] = kafkaServer.get( "address", "" )
                 self.kafkaServerParams[ "port" ] = kafkaServer.get( "port", "" )
-                self.logger.debug( "Kafka server address: %s, port: %s",
+                self.kafkaServerParams[ "topic" ] = kafkaServer.get( "topic", "" )
+                self.logger.debug( "Kafka server address: %s, port: %s, topic: %s",
                     str( self.kafkaServerParams[ "address" ] ),
-                    str( self.kafkaServerParams[ "port" ] ) )
+                    str( self.kafkaServerParams[ "port" ] ),
+                    str( self.kafkaServerParams[ "topic" ] ) )
             logVoIPServer = parameters.get( "logVoIPServer", "" )
             if logVoIPServer != "" :
                 self.logVoIPServerParams[ "path" ] = logVoIPServer.get( "path", "" )
@@ -152,6 +154,9 @@ class ConfigurationManager():
     
     def getKafkaServerPort( self ) :
         return self.kafkaServerParams[ "port" ]
+
+    def getKafkaServerTopic( self ) :
+        return self.kafkaServerParams[ "topic" ]
 
     def getLogVoIPServerPath( self ) :
         return self.logVoIPServerParams[ "path" ]

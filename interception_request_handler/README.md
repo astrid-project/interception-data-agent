@@ -34,7 +34,7 @@ This code implements "INTERCEPTION HANDLER" agent ("Interception Request Handler
 ```
 
 "Interception Request Handler" acts as a proxy server: receive requests from LEA and move
-them to the "Interception Core Handler" using the "Context Broker API"
+them to the "Interception Core Handler".
 
 # Installation
 1. Prerequisite
@@ -84,12 +84,16 @@ bash ./scripts/configure.sh -h
 -a REST_IP            IP address of local REST listen server,
                           default "0.0.0.0", all addresses
 -b REST_PORT          Port of local REST listen server, default 5003
+-g KAFKA_IP           Kafka IP address, default is empty value, not used
+-k KAFKA_PORT         Kafka port, default is 5002
+-w KAFKA_TOPIC        Kafka topic used for communication with Kafka broker
 -e CONTEXTBROKER_IP   Local ContextBroker IP address, default value is empty
 -f CONTEXTBROKER_PORT Local ContextBroker port, default value is empty
 -u USER               User to use to connect to ContextBroker, default value is "astrid"
 -p PASSWORD           Password to use to connect to ContextBroker
 
 * If not specified, default value is used*
+
 
 ```
 

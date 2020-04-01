@@ -12,6 +12,7 @@ import json
 
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from myLogger import MyLogger
+from kafkaClient import KafkaClient
 
 """
 RestServerHandler
@@ -23,6 +24,7 @@ class RestServerHandler( BaseHTTPRequestHandler ) :
     contextBrokerAddress = ""
     contextBrokerPort = 0
     logger = ""
+    kafkaClient = ""
     
     def _set_headers( self, code = 200 ) :
         self.send_response( code ) 
@@ -38,7 +40,7 @@ class RestServerHandler( BaseHTTPRequestHandler ) :
         return
     
     def do_POST( self ) :
-        boolResult = False
+        requestFound = False
         response = { 'ok' : 'ok' }  # response
         # self._set_headers()
         requestMessageLength = int( self.headers.get( 'content-length' ) )
@@ -52,6 +54,7 @@ class RestServerHandler( BaseHTTPRequestHandler ) :
         
         # /interceptionstart
         if self.path == "/interceptionrequeststart" :
+            requestFound = True
             RestServerHandler.logger.debug( "POST request : interception request start" )
             userID = requestJson.get( "userID", "" )
             providerID = requestJson.get( "serviceProviderID", "" )
@@ -61,27 +64,47 @@ class RestServerHandler( BaseHTTPRequestHandler ) :
             
             if RestServerHandler.interceptionTasks.get( interceptionName, False ) :
                 RestServerHandler.logger.debug( "interception request task yet exist !" )
+                self._set_headers()
             else :
                 RestServerHandler.interceptionTasks[ interceptionName ] = True
                 
-                # TODO : execute request to CB
-                url = "http://" + str( RestServerHandler.contextBrokerAddress ) + ":" + \
-                    str( RestServerHandler.contextBrokerPort )
-                payload = "{}" # Json format
-                try :
-                    cbResponse = requests.post( url , data = payload )
-                    RestServerHandler.logger.debug( "start request sent to %s", str( url ) )
-                    RestServerHandler.logger.debug( cbResponse.text() )
-                    RestServerHandler.logger.debug( cbResponse.json() )
-                    RestServerHandler.logger.debug( cbResponse.status_code )
-                    self._set_headers( cbResponse.status_code )
-                except Exception as e :
-                    RestServerHandler.logger.debug( e )
-                    self._set_headers( requests.codes["internal_server_error"] )
+                if RestServerHandler.contextBrokerAddress != "0.0.0.0" and \
+                        RestServerHandler.contextBrokerAddress != "" :
+                    # TODO : execute request to CB
+                    url = "http://" + str( RestServerHandler.contextBrokerAddress ) + ":" + \
+                        str( RestServerHandler.contextBrokerPort )
+                    payload = "{}" # Json format
+                    try :
+                        cbResponse = requests.post( url , data = payload )
+                        RestServerHandler.logger.debug( "start request sent to %s", str( url ) )
+                        RestServerHandler.logger.debug( cbResponse.text() )
+                        RestServerHandler.logger.debug( cbResponse.json() )
+                        RestServerHandler.logger.debug( cbResponse.status_code )
+                        self._set_headers( cbResponse.status_code )
+                    except Exception as e :
+                        RestServerHandler.logger.debug( e )
+                        self._set_headers( requests.codes[ "internal_server_error" ] )
+
+                if RestServerHandler.kafkaClient != "" and \
+                        RestServerHandler.kafkaClient != None :
+                    # send message to Kafka Broker
+                    messageToSend = dict()
+                    messageToSend[ "userID" ] = userID
+                    messageToSend[ "providerID" ] = providerID
+                    messageToSend[ "serviceID" ] = serviceID
+                    messageToSend[ "action" ] = "start"
+                    self._set_headers()
+                    try :
+                        RestServerHandler.kafkaClient.send( messageToSend )
+                    except Exception as e :
+                        RestServerHandler.logger.debug( e )
+                        self._set_headers( requests.codes[ "internal_server_error" ] )
+
                 
         
         # /interceptionstop
         if self.path == "/interceptionrequeststop" :
+            requestFound = True
             RestServerHandler.logger.debug( "POST request : interception request stop" )
             userID = requestJson.get( "userID", "" )
             providerID = requestJson.get( "serviceProviderID", "" )
@@ -90,27 +113,53 @@ class RestServerHandler( BaseHTTPRequestHandler ) :
             interceptionName = str( serviceID ) + str( providerID ) + str( userID )
             interceptionTask = RestServerHandler.interceptionTasks.pop( interceptionName, False )
             if interceptionTask :
-                # TODO : execute request to CB
-                url = "http://" + str( RestServerHandler.contextBrokerAddress ) + ":" + \
-                    str( RestServerHandler.contextBrokerPort )
-                payload = "{}" # Json format
-                try :
-                    cbResponse = requests.post( url, data = payload )
-                    RestServerHandler.logger.debug( "stop request sent to %s", str( url ) )
-                    RestServerHandler.logger.debug( cbResponse.text() )
-                    RestServerHandler.logger.debug( cbResponse.json() )
-                    RestServerHandler.logger.debug( cbResponse.status_code )
-                    self._set_headers( cbResponse.status_code )
-                except Exception as e :
-                    RestServerHandler.logger.debug( e )
-                    self._set_headers( requests.code["internal_server_error"] )
+
+                if RestServerHandler.contextBrokerAddress != "0.0.0.0" and \
+                        RestServerHandler.contextBrokerAddress != "" :
+                    # TODO : execute request to CB
+                    url = "http://" + str( RestServerHandler.contextBrokerAddress ) + ":" + \
+                        str( RestServerHandler.contextBrokerPort )
+                    payload = "{}" # Json format
+                    try :
+                        cbResponse = requests.post( url, data = payload )
+                        RestServerHandler.logger.debug( "stop request sent to %s", str( url ) )
+                        RestServerHandler.logger.debug( cbResponse.text() )
+                        RestServerHandler.logger.debug( cbResponse.json() )
+                        RestServerHandler.logger.debug( cbResponse.status_code )
+                        self._set_headers( cbResponse.status_code )
+                    except Exception as e :
+                        RestServerHandler.logger.debug( e )
+                        self._set_headers( requests.code[ "internal_server_error" ] )
+
+                if RestServerHandler.kafkaClient != "" and \
+                        RestServerHandler.kafkaClient != None :
+                    # send command to Kafka broker
+                    messageToSend = dict()
+                    messageToSend[ "userID" ] = userID
+                    messageToSend[ "providerID" ] = providerID
+                    messageToSend[ "serviceID" ] = serviceID
+                    messageToSend[ "action" ] = "stop"
+                    self._set_headers()
+
+                    try :
+                        RestServerHandler.kafkaClient.send( messageToSend )
+                    except Exception as e:
+                        RestServerHandler.logger.debug( e )
+                        self._set_headers( requests.code[ "internal_server_error" ] )
+        
+        if requestFound == False :
+            # request (endpoint) not found
+            self.logger.debug( "request (endpoint) not found" )
+            self._set_headers( 404 )
+
 
         self.wfile.write( bytes( json.dumps( response ), "utf-8" ) )
 
 
 class RestServer():
     def __init__( self, restServerAddress, restServerPort,
-        contextBrokerAddress, contextBrokerPort ):
+        contextBrokerAddress, contextBrokerPort,
+        kafkaAddress, kafkaPort, kafkaTopic ):
         
         myLogger = MyLogger()
         self.logger = myLogger.getLogger( __name__ )
@@ -120,6 +169,7 @@ class RestServer():
         RestServerHandler.contextBrokerAddress = contextBrokerAddress
         RestServerHandler.contextBrokerPort = contextBrokerPort
         RestServerHandler.logger = self.logger
+        RestServerHandler.kafkaClient = KafkaClient( kafkaAddress, kafkaPort, kafkaTopic )
         return None
     
     def run( self ) :
