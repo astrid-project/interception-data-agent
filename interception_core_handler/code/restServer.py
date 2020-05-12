@@ -29,6 +29,15 @@ class RestServerHandler( BaseHTTPRequestHandler ) :
     logger = ""
     interceptionTool = InterceptionTool.Undefined
     savedInterceptionPath = ""
+    logstashAddress = ""
+    logstashMsgPort = 0
+    logstashVersion = 0
+    kafkaAddress = ""
+    kafkaPort = 0
+    kafkaTopic = ""
+    logstashDataPort = 0
+    tcpServerAddress = ""
+    tcpServerPort =  0
 
     def _set_headers( self, code = 200 ) :
         self.send_response( code ) 
@@ -82,7 +91,17 @@ class RestServerHandler( BaseHTTPRequestHandler ) :
                     RestServerHandler.interceptionInterfaceName, RestServerHandler.logVoIPFilePath, 
                     RestServerHandler.logVoIPFileName, RestServerHandler.readVoIPLogTimeout,
                     RestServerHandler.interceptionTool,
-                    RestServerHandler.savedInterceptionPath )
+                    RestServerHandler.savedInterceptionPath,
+                    RestServerHandler.logstashAddress,
+                    RestServerHandler.logstashMsgPort,
+                    RestServerHandler.logstashVersion,
+                    RestServerHandler.kafkaAddress,
+                    RestServerHandler.kafkaPort,
+                    RestServerHandler.kafkaTopic,
+                    RestServerHandler.logstashDataPort,
+                    RestServerHandler.tcpServerAddress,
+                    RestServerHandler.tcpServerPort
+                )
                 interceptionTask.start()
                 RestServerHandler.interceptionTasks[ interceptionName ] = interceptionTask
                 
@@ -115,7 +134,11 @@ class RestServer():
     def __init__( self, restServerAddress, restServerPort,
         polycubeServerAddress, polycubeServerPort, interceptionInterfaceName,
         logVoIPFilePath, logVoIPFileName, readVoIPLogTimeout, 
-        interceptionTool, savedInterceptionPath ):
+        interceptionTool, savedInterceptionPath,
+        logstashAddress, logstashMsgPort, logstashVersion,
+        kafkaAddress, kafkaPort, kafkaTopic = "interception_data",
+        logstashDataPort = 5960,
+        tcpServerAddress = "", tcpServerPort = 0 ):
         
         myLogger = MyLogger()
         self.logger = myLogger.getLogger( __name__ )
@@ -131,6 +154,15 @@ class RestServer():
         RestServerHandler.logger = self.logger
         RestServerHandler.interceptionTool = interceptionTool
         RestServerHandler.savedInterceptionPath = savedInterceptionPath
+        RestServerHandler.logstashAddress = logstashAddress
+        RestServerHandler.logstashMsgPort = logstashMsgPort
+        RestServerHandler.logstashVersion = logstashVersion
+        RestServerHandler.kafkaAddress = kafkaAddress
+        RestServerHandler.kafkaPort = kafkaPort
+        RestServerHandler.kafkaTopic = kafkaTopic
+        RestServerHandler.logstashDataPort = logstashDataPort
+        RestServerHandler.tcpServerAddress = tcpServerAddress
+        RestServerHandler.tcpServerPort = tcpServerPort
         return None
     
     def run( self ) :

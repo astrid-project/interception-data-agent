@@ -1,6 +1,7 @@
 # Interception Core Handler description
 The "Interception Core Handler" is used to retrieve information about VoIP (calls information 
 and interception), following of a LEA (Law Enforcement Agency) request. 
+
 Interception software makes use of SeVoC (VoIP) and Polycube PacketCapture.
 
 ## Table of Contents
@@ -47,6 +48,7 @@ Function (VNF) side.
 
 - `Python3`
 - `pip3`
+- `Polycube` - https://polycube-network.readthedocs.io/en/latest/
 
 2. Clone the repository
 
@@ -66,6 +68,7 @@ There are two methods to set up "Interception Core Handler": modifing directly t
 
 ## Configuration by file
 The software configuration can be done using the file "configurationFile.conf" in the "config" folder (interception-data-agent/interception_core_handler/config/configurationFile.conf).
+
 The configuration file is in JSON format.
 All parameters are in the "parameters" scope.
 Following is the description of every field:

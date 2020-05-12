@@ -12,11 +12,17 @@ polycube_port=9000
 kafka_address=""
 kafka_port=5002
 kafka_topic="interception"
+logstash_address="127.0.0.1"
+logstash_msg_port=5959
+logstash_data_port=5960
+logstash_version=1
 log_voip_path="./logs/"
 log_voip_file_name="containerLogs.log"
 log_voip_reading_time=0.5
 polycube_is_enabled=false
 libpcap_is_enabled=true
+tcp_server_address=""
+tcp_server_port=0
 
 help() {
     echo "Usage : "
@@ -33,19 +39,29 @@ help() {
     echo "-g KAFKA_IP           Kafka IP address, default is empty value, not used"
     echo "-k KAFKA_PORT         Kafka port, default is 5002"
     echo "-w KAFKA_TOPIC        Kafka topic used for communication with Kafka broker"
+    echo "-l LOGSTASH_IP        Logstash server address, default is \"127.0.0.1\""
+    echo "-n LOGSTASH_MSG_PORT  "
+    echo "                      Logstash server port for event message trasmission, default is 5959"
+    echo "-c LOGSTASH_DATA_PORT"
+    echo "                      Logstash server port for interception data trasmission (pcap file),"
+    echo "                      default is 5960"
+    echo "-s LOGSTASH_VERSION   Logstash server communication protocol version, default version is 1"
     echo "-m LOG_PATH           Path of VoIP log file (folder)"
-    echo "-p LOG_FILENAME       Name of VoIP log file"
+    echo "-o LOG_FILENAME       Name of VoIP log file"
     echo "-t LOG_READ_TIME      Timeout for execution of one VoIP log file reading cycle"
     echo "-u ENABLE_POLYCUBE    Enable/disable Polycube PacketCapture for interception,"
     echo "                          allowed values: true (active) / false (deactive - default)"
     echo "-z ENABLE_LIBPCAP     Enable/disable Libpcap for interception,"
     echo "                          allowed values: true (active - default) / false (deactive)"
+    echo "-q TCP_SERVER_ADDRESS Tcp server address to reach to send interception data (pcap file),"
+    echo "                      default is null (disabled)"
+    echo "-r TCP_SERVER_PORT    Tcp server port, default is 0 (disabled)"
     echo ""
-    echo "* If not specified, default value is used*"
+    echo "* If not specified, default value is used *"
     echo ""
 }
 # load data from parameters
-while getopts ":hd:i:p:a:b:e:f:g:k:w:m:p:t:u:z:" args; do
+while getopts ":hd:i:p:a:b:e:f:g:k:w:l:n:c:s:m:o:t:u:z:q:r" args; do
     case ${args} in
         h)
             help
@@ -80,10 +96,22 @@ while getopts ":hd:i:p:a:b:e:f:g:k:w:m:p:t:u:z:" args; do
         w)
             kafka_topic=$OPTARG
             ;;
+        l)
+            logstash_address=$OPTARG
+            ;;
+        n)
+            logstash_msg_port=$OPTARG
+            ;;
+        c)  
+            logstash_data_port=$OPTARG
+            ;;
+        s)
+            logstash_version=$OPTARG
+            ;;
         m) 
             log_voip_path=$OPTARG
             ;;
-        p) 
+        o) 
             log_voip_file_name=$OPTARG
             ;;
         t) 
@@ -94,6 +122,12 @@ while getopts ":hd:i:p:a:b:e:f:g:k:w:m:p:t:u:z:" args; do
             ;;
         z)  
             libpcap_is_enabled=$OPTARG
+            ;;
+        q)
+            tcp_server_address=$OPTARG
+            ;;
+        r)  
+            tcp_server_port=$OPTARG
             ;;
         \?)
             echo "Error: Invalid argument : ${args}"
@@ -133,11 +167,17 @@ if [ -f ./config/base.conf ]; then
     sed -i "s#\@KAFKAADDRESS#${kafka_address}#" ./config/configurationFile.conf
     sed -i "s#\@KAFKAPORT#${kafka_port}#" ./config/configurationFile.conf
     sed -i "s#\@KAFKATOPIC#${kafka_topic}#" ./config/configurationFile.conf
+    sed -i "s#\@LOGSTASHADDRESS#${logstash_address}#" ./config/configurationFile.conf
+    sed -i "s#\@LOGSTASHMSGPORT#${logstash_msg_port}#" ./config/configurationFile.conf
+    sed -i "s#\@LOGSTASHDATAPORT#${logstash_data_port}#" ./config/configurationFile.conf
+    sed -i "s#\@LOGSTASHVERSION#${logstash_version}#" ./config/configurationFile.conf
     sed -i "s#\@LOGVOIPPATH#${log_voip_path}#" ./config/configurationFile.conf
     sed -i "s#\@LOGVOIPFILENAME#${log_voip_file_name}#" ./config/configurationFile.conf
     sed -i "s#\@LOGVOIPREADINGTIME#${log_voip_reading_time}#" ./config/configurationFile.conf
     sed -i "s#\@POLYCUBEISENABLED#${polycube_is_enabled}#" ./config/configurationFile.conf
     sed -i "s#\@LIBPCAPISENABLED#${libpcap_is_enabled}#" ./config/configurationFile.conf
+    sed -i "s#\@TCPSERVERADDRESS#${tcp_server_address}#" ./config/configurationFile.conf
+    sed -i "s#\@TCPSERVERPORT#${tcp_server_port}#" ./config/configurationFile.conf
 else
     echo "Error: ./config/base.conf does not exist"
     exit 1

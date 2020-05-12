@@ -46,8 +46,10 @@ class ConfigurationManager():
         self.restServerParams = {} # "address" and "port"
         self.polycubeServerParams = {} # "address" and "port"
         self.kafkaServerParams = {} # "address" and "port"
+        self.logstashServerParams = {} # "address", "msgPort", "dataPort" and "version"
         self.logVoIPServerParams = {} # "path" and "timeout"
         self.interceptionTool = ""
+        self.tcpServerParams = {} # "address" and "port"
 
         try:
             path = self.configFilePath + self.configFileName
@@ -102,6 +104,17 @@ class ConfigurationManager():
                     str( self.kafkaServerParams[ "address" ] ),
                     str( self.kafkaServerParams[ "port" ] ),
                     str( self.kafkaServerParams[ "topic" ] ) )
+            logstashServer = parameters.get( "logstashServer", "" )
+            if logstashServer != "" :
+                self.logstashServerParams[ "address" ] = logstashServer.get( "address", "" )
+                self.logstashServerParams[ "msgPort" ] = logstashServer.get( "msgPort", "" )
+                self.logstashServerParams[ "dataPort" ] = logstashServer.get( "dataPort", "" )
+                self.logstashServerParams[ "version" ] = logstashServer.get( "version", "" )
+                self.logger.debug( "Logstash server address: %s, msgPort: %s, dataPort: %s, version: %s",
+                    str( self.logstashServerParams[ "address" ] ),
+                    str( self.logstashServerParams[ "msgPort" ] ),
+                    str( self.logstashServerParams[ "dataPort" ] ),
+                    str( self.logstashServerParams[ "version" ] ))
             logVoIPServer = parameters.get( "logVoIPServer", "" )
             if logVoIPServer != "" :
                 self.logVoIPServerParams[ "path" ] = logVoIPServer.get( "path", "" )
@@ -110,6 +123,12 @@ class ConfigurationManager():
                 self.logger.debug( "log VoIP server path: \"%s\", file name: \"%s\", reading timeout: %s sec",
                     str( self.logVoIPServerParams[ "path" ] ), str( self.logVoIPServerParams[ "name" ] ),
                     str( self.logVoIPServerParams[ "readingTimeOut" ] ) )
+            tcpServer = parameters.get( "tcpServer", "" )
+            if tcpServer != "" :
+                self.tcpServerParams[ "address" ] = tcpServer.get( "address", "" )
+                self.tcpServerParams[ "port" ] = tcpServer.get( "port", "" )
+                self.logger.debug( "tcp server address: %s, port: %s", \
+                    str( self.tcpServerParams[ "address" ] ), str( self.tcpServerParams[ "port" ] ) )
             interceptionTool = parameters.get( "interceptionTool", "" )
             if interceptionTool != "" :
                 isPolycubePacketCaptureEnabled = interceptionTool.get( "polycubePacketCapture", False )
@@ -158,6 +177,18 @@ class ConfigurationManager():
     def getKafkaServerTopic( self ) :
         return self.kafkaServerParams[ "topic" ]
 
+    def getLogstashServerAddress( self ) :
+        return self.logstashServerParams[ "address" ]
+
+    def getLogstashServerMsgPort( self ) :
+        return self.logstashServerParams[ "msgPort" ]
+
+    def getLogstashServerDataPort( self ) :
+        return self.logstashServerParams[ "dataPort" ]
+
+    def getLogstashServerVersion( self ) :
+        return self.logstashServerParams[ "version" ]
+
     def getLogVoIPServerPath( self ) :
         return self.logVoIPServerParams[ "path" ]
 
@@ -166,6 +197,12 @@ class ConfigurationManager():
 
     def getVoIPLogReadingTimeOut( self ) :
         return self.logVoIPServerParams[ "readingTimeOut" ]
+
+    def getTcpServerAddress( self ) :
+        return self.tcpServerParams[ "address" ]
+
+    def getTcpServerPort( self ) :
+        return self.tcpServerParams[ "port" ] 
 
     def getInterceptionTool( self ) :
         return self.interceptionTool

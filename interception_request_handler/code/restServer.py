@@ -66,8 +66,8 @@ class RestServerHandler( BaseHTTPRequestHandler ) :
                 RestServerHandler.logger.debug( "interception request task yet exist !" )
                 self._set_headers()
             else :
-                RestServerHandler.interceptionTasks[ interceptionName ] = True
-                
+                error = None
+
                 if RestServerHandler.contextBrokerAddress != "0.0.0.0" and \
                         RestServerHandler.contextBrokerAddress != "" :
                     # TODO : execute request to CB
@@ -75,15 +75,17 @@ class RestServerHandler( BaseHTTPRequestHandler ) :
                         str( RestServerHandler.contextBrokerPort )
                     payload = "{}" # Json format
                     try :
-                        cbResponse = requests.post( url , data = payload )
+                        cbResponse = requests.post( url , data = payload, timeout = 3 )
                         RestServerHandler.logger.debug( "start request sent to %s", str( url ) )
                         RestServerHandler.logger.debug( cbResponse.text() )
                         RestServerHandler.logger.debug( cbResponse.json() )
                         RestServerHandler.logger.debug( cbResponse.status_code )
                         self._set_headers( cbResponse.status_code )
                     except Exception as e :
+                        error = e
                         RestServerHandler.logger.debug( e )
-                        self._set_headers( requests.codes[ "internal_server_error" ] )
+                        # 500 = internal server error
+                        self._set_headers( 500 )
 
                 if RestServerHandler.kafkaClient != "" and \
                         RestServerHandler.kafkaClient != None :
@@ -97,8 +99,16 @@ class RestServerHandler( BaseHTTPRequestHandler ) :
                     try :
                         RestServerHandler.kafkaClient.send( messageToSend )
                     except Exception as e :
+                        error = e
                         RestServerHandler.logger.debug( e )
-                        self._set_headers( requests.codes[ "internal_server_error" ] )
+                        # 500 = internal server error
+                        self._set_headers( 500 )
+                
+                # if NO error, add interceptionTask to the list
+                if error == None :
+                    RestServerHandler.interceptionTasks[ interceptionName ] = True
+                else :
+                    response = { "error" : str( error ) }
 
                 
         
@@ -113,7 +123,7 @@ class RestServerHandler( BaseHTTPRequestHandler ) :
             interceptionName = str( serviceID ) + str( providerID ) + str( userID )
             interceptionTask = RestServerHandler.interceptionTasks.pop( interceptionName, False )
             if interceptionTask :
-
+                error = None
                 if RestServerHandler.contextBrokerAddress != "0.0.0.0" and \
                         RestServerHandler.contextBrokerAddress != "" :
                     # TODO : execute request to CB
@@ -121,15 +131,17 @@ class RestServerHandler( BaseHTTPRequestHandler ) :
                         str( RestServerHandler.contextBrokerPort )
                     payload = "{}" # Json format
                     try :
-                        cbResponse = requests.post( url, data = payload )
+                        cbResponse = requests.post( url, data = payload, timeout = 3 )
                         RestServerHandler.logger.debug( "stop request sent to %s", str( url ) )
                         RestServerHandler.logger.debug( cbResponse.text() )
                         RestServerHandler.logger.debug( cbResponse.json() )
                         RestServerHandler.logger.debug( cbResponse.status_code )
                         self._set_headers( cbResponse.status_code )
                     except Exception as e :
+                        error = e
                         RestServerHandler.logger.debug( e )
-                        self._set_headers( requests.code[ "internal_server_error" ] )
+                        # 500 = internal server error
+                        self._set_headers( 500 )
 
                 if RestServerHandler.kafkaClient != "" and \
                         RestServerHandler.kafkaClient != None :
@@ -144,12 +156,25 @@ class RestServerHandler( BaseHTTPRequestHandler ) :
                     try :
                         RestServerHandler.kafkaClient.send( messageToSend )
                     except Exception as e:
+                        error = e
                         RestServerHandler.logger.debug( e )
-                        self._set_headers( requests.code[ "internal_server_error" ] )
+                        # 500 = internal server error
+                        self._set_headers( 500 )
+
+                # if ERROR, add task to the list
+                if error != None :
+                    response = { "error" : str( error ) }
+                    RestServerHandler.interceptionTasks[ interceptionName ] = True
+            else :
+                # 500 = internal server error
+                response = { "error" : "interception name not found" }
+                self._set_headers( 500 )
         
         if requestFound == False :
             # request (endpoint) not found
+            response = { "error" : "endpoint not found" }
             self.logger.debug( "request (endpoint) not found" )
+            # 404 = page not found
             self._set_headers( 404 )
 
 
@@ -169,7 +194,8 @@ class RestServer():
         RestServerHandler.contextBrokerAddress = contextBrokerAddress
         RestServerHandler.contextBrokerPort = contextBrokerPort
         RestServerHandler.logger = self.logger
-        RestServerHandler.kafkaClient = KafkaClient( kafkaAddress, kafkaPort, kafkaTopic )
+        if kafkaAddress != "" and kafkaPort != 0 :
+            RestServerHandler.kafkaClient = KafkaClient( kafkaAddress, kafkaPort, kafkaTopic )
         return None
     
     def run( self ) :

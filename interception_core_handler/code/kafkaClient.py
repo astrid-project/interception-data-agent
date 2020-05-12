@@ -6,16 +6,20 @@ info: guerino.lamanna@infocomgenova.it
 """
 
 import json
+import threading
 
 from kafka import KafkaConsumer
 from myLogger import MyLogger
 from interceptionTask import InterceptionTask
 
-class KafkaClient() :
+class KafkaClient( threading.Thread ) :
     def __init__( self, address, port, topic,
             polycubeServerAddress, polycubeServerPort, interceptionInterfaceName,
             logVoIPFilePath, logVoIPFileName, readVoIPLogTimeout, 
-            interceptionTool, savedInterceptionPath ) :
+            interceptionTool, savedInterceptionPath,
+            logstashAddress, logstashMsgPort, logstashVersion,
+            interceptionSenderTopic, logstashDataPort,
+            tcpServerAddress, tcpServerPort  ) :
         self.address = address
         self.port = port
         self.topic = topic
@@ -31,6 +35,13 @@ class KafkaClient() :
         self.readVoIPLogTimeout = readVoIPLogTimeout
         self.interceptionTool = interceptionTool
         self.savedInterceptionPath = savedInterceptionPath
+        self.logstashAddress = logstashAddress
+        self.logstashMsgPort = logstashMsgPort
+        self.logstashVersion = logstashVersion
+        self.interceptionSenderTopic = interceptionSenderTopic
+        self.logstashDataPort = logstashDataPort
+        self.tcpServerAddress = tcpServerAddress
+        self.tcpServerPort = tcpServerPort
 
         myLogger = MyLogger()
         self.logger = myLogger.getLogger( __name__ )
@@ -84,7 +95,16 @@ class KafkaClient() :
                             self.interceptionInterfaceName, self.logVoIPFilePath, 
                             self.logVoIPFileName, self.readVoIPLogTimeout,
                             self.interceptionTool,
-                            self.savedInterceptionPath )
+                            self.savedInterceptionPath,
+                            self.logstashAddress,
+                            self.logstashMsgPort,
+                            self.logstashVersion,
+                            self.address,
+                            self.port,
+                            self.interceptionSenderTopic,
+                            self.logstashDataPort,
+                            self.tcpServerAddress,
+                            self.tcpServerPort )
                         interceptionTask.start()
                         self.interceptionTasks[ interceptionName ] = interceptionTask
 

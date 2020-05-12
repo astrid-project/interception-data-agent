@@ -1,5 +1,6 @@
 # Interception Request Handler description
 The "Interception Request Handler" is a software developed in the Astrid Project. 
+
 The code is used to receive request of interception by LEA (Law Enforcement Agency) and send an active/deactive command to the "Interception Core Handler", using Context-Broker API
 
 ## Table of Contents
@@ -61,6 +62,7 @@ There are two methods to set up "Interception Request Handler": modifing directl
 ## Configuration by file
 The software configuration can be done using the file "configurationFile.conf" in the "config" folder (interception-data-agent/interception_request_handler/config/configurationFile.conf).
 The configuration file is in JSON format.
+
 All parameters are in the "parameters" scope.
 Following is the description of every field:
 

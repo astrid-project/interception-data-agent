@@ -70,6 +70,8 @@ class TcpdumpHandler() :
         completePath = pcapFilePath + pcapFileName
         args.append( "-w" )
         args.append( completePath )
+        # add "-U" to write pcap file immediately after every packet capture
+        args.append( "-U" )
         logger.debug( args )
         return args
 
@@ -112,6 +114,15 @@ class TcpdumpHandler() :
             return True
 
         return False
+
+    def interceptionSetFileName( self, fileName ) :
+        if fileName != "" :
+            self.savedInterceptionFileName = fileName
+            return True
+        return False
+
+    def interceptionGetFileName( self ) :
+        return self.savedInterceptionFileName
     
 
 

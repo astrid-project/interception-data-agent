@@ -12,12 +12,16 @@ from IPy import IP
 class EventType( Enum ) :
     Undefined = 0
     InterceptedIPParameters = 1
+    IncomingCallParameters = 2
+    StartCallParameters = 3
+    StopCallParameters = 4
+    RejectedCallParameters = 5
 
 class Event() :
     eventID = 0
     def __init__( self, eventName = EventType.Undefined ) :
         self.eventName = eventName
-        self.data = {}
+        self.data = dict()
         self.__id = Event.eventID
         Event.eventID += 1
 
@@ -70,12 +74,20 @@ class ParsingHandler() :
             if self.fp :
                 line = self.fp.readline()
                 if not line :
-                    # self.logger.debug( "end of file" )
+                    #self.logger.debug( "end of file" )
                     break
                 #self.logger.debug( "read line: %s", line )
 
-                # TODO : parse line and create and Event
+                # parse line and create and Event
                 if self.__findOutChangeInterceptedIPParametersEvent( line ) :
+                    returnValue = True
+                if self.__incomingCallEvent( line ) :
+                    returnValue = True
+                if self.__startCallEvent( line ) :
+                    returnValue = True
+                if self.__stopCallEvent( line ) :
+                    returnValue = True
+                if self.__rejectedCallEvent( line ) :
                     returnValue = True
         
         return returnValue
@@ -83,7 +95,7 @@ class ParsingHandler() :
     """
     findOutchangeInterceptedIPParametersEvent
     ::
-    Update Parsinghandler object adding "changeInterceptedIP" event and data to self.events array
+    Update Parsinghandler object adding "InterceptedIPParameters" event and data to self.events array
     ::
     it returns True if it find out some events, False if it doesn't
     ::
@@ -127,17 +139,257 @@ class ParsingHandler() :
         return False
 
     """
+    incomingCallEvent
+    ::
+    Update Parsinghandler object adding "IncomingCallParameters" event and data to self.events array
+    ::
+    it returns True if it find out some events, False if it doesn't
+    ::
+    example::
+    INFO  [2020-01-30 14:54:29,199] incoming call from +306944125708 to +306941234567
+    """
+    def __incomingCallEvent( self, line = "" ) :
+        if line != "" :
+            elems = line.split()
+            userFrom = ""
+            userTo = ""
+            # check if "incoming call" is the line
+            if "incoming call" in line:
+                # check userID of calling user
+                for i in range( len( elems ) ) :
+                    if elems[ i ] == "from" :
+                        if i < len( elems ) :
+                            userFrom = elems[ i + 1 ]
+                        else :
+                            userFrom = ""
+                    if elems[ i ] == "to" :
+                        if i < len( elems ) :
+                            userTo = elems[ i + 1 ]
+                        else :
+                            userTo = ""
+                self.logger.debug( "incoming call from user: %s to user: %s",
+                    str( userFrom ), str( userTo ) ) 
+                
+                # check if userFrom or userTo is the intercepted user
+                if userFrom == self.userID or userTo == self.userID :
+                    # create and save a specific event
+                    event = Event( EventType.IncomingCallParameters )
+                    event.data[ "userFrom" ] = userFrom
+                    event.data[ "userTo" ] = userTo
+                    self.events.add( event )    
+                    return True
+                else :
+                    return False
+        return False
+
+    """
+    startCallEvent
+    ::
+    Update Parsinghandler object adding "StartCallParameters" event and data to self.events array
+    ::
+    it returns True if it find out some events, False if it doesn't
+    ::
+    example::
+    INFO  [2020-01-30 14:54:29,199] start call from +306944125708 to +306941234567
+    """
+    def __startCallEvent( self, line = "" ) :
+        if line != "" :
+            elems = line.split()
+            userFrom = ""
+            userTo = ""
+            # check if "start call" is the line
+            if "start call" in line:
+                # check userID of calling user
+                for i in range( len( elems ) ) :
+                    if elems[ i ] == "from" :
+                        if i < len( elems ) :
+                            userFrom = elems[ i + 1 ]
+                        else :
+                            userFrom = ""
+                    if elems[ i ] == "to" :
+                        if i < len( elems ) :
+                            userTo = elems[ i + 1 ]
+                        else :
+                            userTo = ""
+                self.logger.debug( "start call from user: %s to user: %s",
+                    str( userFrom ), str( userTo ) ) 
+                
+                # check if userFrom or userTo is the intercepted User
+                if userFrom == self.userID or userTo == self.userID :
+                    # create and save a specific event
+                    event = Event( EventType.StartCallParameters )
+                    event.data[ "userFrom" ] = userFrom
+                    event.data[ "userTo" ] = userTo
+                    self.events.add( event )
+                    return True
+                else :
+                    return False
+        return False
+
+    """
+    stopCallEvent
+    ::
+    Update Parsinghandler object adding "StopCallParameters" event and data to self.events array
+    ::
+    it returns True if it find out some events, False if it doesn't
+    ::
+    example::
+    INFO  [2020-01-30 14:54:29,199] stop call from +306944125708 to +306941234567
+    """
+    def __stopCallEvent( self, line = "" ) :
+        if line != "" :
+            elems = line.split()
+            userFrom = ""
+            userTo = ""
+            # check if "stop call" is the line
+            if "stop call" in line:
+                # check userID of calling user
+                for i in range( len( elems ) ) :
+                    if elems[ i ] == "from" :
+                        if i < len( elems ) :
+                            userFrom = elems[ i + 1 ]
+                        else :
+                            userFrom = ""
+                    if elems[ i ] == "to" :
+                        if i < len( elems ) :
+                            userTo = elems[ i + 1 ]
+                        else :
+                            userTo = ""
+                self.logger.debug( "stop call from user: %s to user: %s",
+                    str( userFrom ), str( userTo ) ) 
+                
+                # check if userFrom or userTo is the intercepted User
+                if userFrom == self.userID or userTo == self.userID :
+                    # create and save a specific event
+                    event = Event( EventType.StopCallParameters )
+                    event.data[ "userFrom" ] = userFrom
+                    event.data[ "userTo" ] = userTo
+                    self.events.add( event )
+                    return True
+                else : 
+                    return False
+        return False
+
+    """
+    rejectedCallEvent
+    ::
+    Update Parsinghandler object adding "RejectedCallParameters" event and data to self.events array
+    ::
+    it returns True if it find out some events, False if it doesn't
+    ::
+    example::
+    INFO  [2020-01-30 14:54:29,199] rejected call from +306944125708 to +306941234567
+    """
+    def __rejectedCallEvent( self, line = "" ) :
+        if line != "" :
+            elems = line.split()
+            userFrom = ""
+            userTo = ""
+            # check if "rejected call" is the line
+            if "rejected call" in line:
+                # check userID of calling user
+                for i in range( len( elems ) ) :
+                    if elems[ i ] == "from" :
+                        if i < len( elems ) :
+                            userFrom = elems[ i + 1 ]
+                        else :
+                            userFrom = ""
+                    if elems[ i ] == "to" :
+                        if i < len( elems ) :
+                            userTo = elems[ i + 1 ]
+                        else :
+                            userTo = ""
+                self.logger.debug( "rejected call from user: %s to user: %s",
+                    str( userFrom ), str( userTo ) ) 
+                
+                # check if userFrom or userTo is the intercepted User
+                if userFrom == self.userID or userTo == self.userID :
+                    # create and save a specific event
+                    event = Event( EventType.RejectedCallParameters )
+                    event.data[ "userFrom" ] = userFrom
+                    event.data[ "userTo" ] = userTo
+                    self.events.add( event )     
+                    return True
+                else :
+                    return False
+        return False
+
+    """
     changeInterceptedIPParameters
     ::
-    Return event if intercepted user IP parameters are changed
+    Returns event if intercepted user IP parameters are changed
+    Filled by findOutchangeInterceptedIPParametersEvent
     data are :
     ::
-    - userID / providerID / serviceID / srcAddress / srcPort / dstAddress / dstPort
+    - srcAddress
     """
     def changeInterceptedIPParameters( self ) :
         for event in self.events :
             if event.eventName == EventType.InterceptedIPParameters :
                 self.events.remove( event )
-                return event.data
+                return event.getData()
         return {}
 
+    """
+    incomingCallParameters
+    ::
+    Returns event if a call is coming
+    Filled by incomingCallEvent
+    data are :
+    ::
+    - userFrom , userTo
+    """
+    def incomingCallParameters( self ) :
+        for event in self.events :
+            if event.eventName == EventType.IncomingCallParameters :
+                self.events.remove( event )
+                return event.getData()
+        return {}
+
+    """
+    startCallParameters
+    ::
+    Returns event if a call is coming
+    Filled by startCallEvent
+    data are :
+    ::
+    - userFrom , userTo
+    """
+    def startCallParameters( self ) :
+        for event in self.events :
+            if event.eventName == EventType.StartCallParameters :
+                self.events.remove( event )
+                return event.getData()
+        return {}
+
+    """
+    stopCallParameters
+    ::
+    Returns event if a call is coming
+    Filled by stopCallEvent
+    data are :
+    ::
+    - userFrom , userTo
+    """
+    def stopCallParameters( self ) :
+        for event in self.events :
+            if event.eventName == EventType.StopCallParameters :
+                self.events.remove( event )
+                return event.getData()
+        return {}
+
+    """
+    rejectedCallParameters
+    ::
+    Returns event if a call is coming
+    Filled by rejectedCallEvent
+    data are :
+    ::
+    - userFrom , userTo
+    """
+    def rejectedCallParameters( self ) :
+        for event in self.events :
+            if event.eventName == EventType.RejectedCallParameters :
+                self.events.remove( event )
+                return event.getData()
+        return {}

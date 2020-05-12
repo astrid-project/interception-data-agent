@@ -18,10 +18,11 @@ logger.setLevel( debugLevel )
 
 class PolycubeHandler() :
     def __init__( self, polycubeServerAddress = "127.0.0.1", polycubeServerPort = 9000,
-                    savedInterceptionPath = "./" ) :
+                    savedInterceptionPath = "./", savedInterceptionFileName = "capture.pcap" ) :
         self.packetCaptureList = {}
         self.polycubeAPI = PolycubeAPI()
         self.savedInterceptionPath = savedInterceptionPath
+        self.savedInterceptionFileName = savedInterceptionFileName
 
     def interceptionStart( self, userID, providerID, serviceID, srcAddress, srcPort, dstAddress,
         dstPort, l4Proto = None, interfaceToAttachName = None ) :
@@ -61,6 +62,14 @@ class PolycubeHandler() :
             return True
 
         return False
-    
 
+    # TODO : set fileName in Polycube Packet Capture
+    def interceptionSetFileName( self, fileName ) :
+        if fileName != "" :
+            self.savedInterceptionFileName = fileName
+            return True
+        return False
+    
+    def interceptionGetFileName( self ) :
+        return self.savedInterceptionFileName
 
