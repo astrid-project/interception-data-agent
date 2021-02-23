@@ -9,6 +9,7 @@ from myLogger import MyLogger
 from configurationManager import ConfigurationManager
 from kafkaClient import KafkaClient
 from tcpServer import TcpServer
+import sys
 
 def main() :
     # main function
@@ -30,6 +31,7 @@ def main() :
             kafkaClient.stop()
         if tcpServer != None :
             tcpServer.stop()
+        sys.exit( 1 )
 
     if kafkaClient != None :
         kafkaClient.join()
