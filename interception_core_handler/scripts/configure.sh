@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # variables to set in configuration file
 # here default values

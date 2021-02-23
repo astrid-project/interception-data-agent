@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # check if python3
 if [ ! $(type -p python3) ]; then

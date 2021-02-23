@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # variables to set in configuration file
 # here default values
@@ -24,7 +24,7 @@ help() {
     echo ""
 }
 # load data from parameters
-while getopts ":hd:i:p:a:b:g:k:w:e:f:u:p:" args; do
+while getopts ":hd:i:p:t:b:g:k:w:e:f:u:p:" args; do
     case ${args} in
         h)
             help
