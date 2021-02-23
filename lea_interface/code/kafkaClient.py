@@ -23,6 +23,9 @@ class KafkaClient( threading.Thread ) :
         self.kafkaPort = kafkaPort
         self.kafkaTopic = kafkaTopic
 
+        # parameter for life cycle
+        self.live = True 
+
         bootstrap_servers = [ str( self.kafkaAddress ) + ":" + str( self.kafkaPort ) ]
         self.logger.debug( "kafka bootstrap server : %s", str( bootstrap_servers ) )
 
