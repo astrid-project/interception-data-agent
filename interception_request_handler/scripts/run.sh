@@ -7,4 +7,4 @@ if [ ! $(type -p python3) ]; then
     exit 1
 fi
 
-python3 ./code/interceptionCoreHandlerMain.py
+python3 ./code/interceptionRequestHandlerMain.py
