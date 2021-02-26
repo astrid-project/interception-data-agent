@@ -1,0 +1,26 @@
+FROM alpine:latest
+LABEL maintainer="Guerino Lamanna - guerino.lamanna@infocomgenova.it"
+LABEL version="0.1"
+LABEL description="Interception Requests Handler"
+WORKDIR /root/interception_request_handler
+
+ENV LOGGERLEVEL="DEBUG"
+ENV RESTSERVERADDRESS="0.0.0.0"
+ENV RESTSERVERPORT="5003"
+ENV KAFKAADDRESS="0.0.0.0"
+ENV KAFKAPORT="5002"
+ENV KAFKATOPIC="interception"
+ENV CONTEXTBROKERADDRESS="0.0.0.0"
+ENV CONTEXTBROKERPORT="0"
+ENV CONTEXTBROKERUSER="astrid"
+ENV CONTEXTBROKERPASSWORD=""
+
+ADD ./interception-data-agent/interception_request_handler /root/interception_request_handler
+
+RUN apk add python3
+RUN apk add py3-pip
+RUN pip3 install -r ./requirements.txt
+
+ENTRYPOINT ./scripts/configure.sh -d $LOGGERLEVEL -a $RESTSERVERADDRESS -b $RESTSERVERPORT -g $KAFKAADDRESS -k $KAFKAPORT -w $KAFKATOPIC -e $CONTEXTBROKERADDRESS -f $CONTEXTBROKERPORT -u $CONTEXTBROKERUSER -p $CONTEXTBROKERPASSWORD ; ./scripts/run.sh
+
+

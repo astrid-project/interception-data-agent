@@ -1,0 +1,22 @@
+FROM alpine:latest
+LABEL maintainer="Guerino Lamanna - guerino.lamanna@infocomgenova.it"
+LABEL version="0.1"
+LABEL description="LEA Interface"
+WORKDIR /root/lea_interface
+
+ENV LOGGERLEVEL="DEBUG"
+ENV TCPSERVERADDRESS="0.0.0.0"
+ENV TCPSERVERPORT="5004"
+ENV KAFKAADDRESS="0.0.0.0"
+ENV KAFKAPORT="5002"
+ENV KAFKATOPIC="interception"
+
+ADD ./interception-data-agent/lea_interface /root/lea_interface
+
+RUN apk add python3
+RUN apk add py3-pip
+RUN pip3 install -r ./requirements.txt
+
+ENTRYPOINT ./scripts/configure.sh -d $LOGGERLEVEL -t $TCPSERVERADDRESS  -u $TCPSERVERPORT -g $KAFKAADDRESS -k $KAFKAPORT -w $KAFKATOPIC; ./scripts/run.sh
+
+

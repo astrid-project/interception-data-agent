@@ -1,0 +1,64 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: lea-interface-configmap
+  namespace: interception
+data:
+  logstash.yml: |
+        config.reload:
+            automatic: true
+            interval: 60s
+        http.host: "0.0.0.0"
+  pipelines.yml: |
+        - pipeline.id: bau
+          path.config: "/usr/share/logstash/pipeline/logstash_for_call_information.conf"
+        - pipeline.id: bau_and_warn
+          path.config: "/usr/share/logstash/pipepline/logstash_for_interception_saving.conf"
+  logstash_for_call_information.conf: |
+    # wait message from port 5959
+    input {
+      tcp {
+        port => 5959
+        codec => json
+      }
+    }
+    
+    # write output on /tmp/ folder with a dinamyc name
+    output {
+      file {
+         path => "/tmp/interception_messages_%{userid}.json"
+         #codec => line { format => "%{message}" }
+         codec => rubydebug
+      }
+    }
+    
+  logstash_for_interception_saving.conf: |
+    # receive message from 5960 port
+    input {
+      tcp {
+        port => 5960
+        codec => json
+      }
+    }
+    
+    # decode message and save interception in /tmp/ folder
+    filter {
+      ruby {
+         init => 'require "base64"'
+         code => 'event.set("data", Base64.decode64(event.get("data")));
+                  data = event.get("data");
+                  path = "/tmp/interception_data_";
+                  path.concat( event.get("interceptionfilename") );
+                  File.open(path, "ab") {|file| file.write( data ) };'
+      }
+    }
+    
+    # write all messages on /tmp/ folder, only for DEBUG purpose
+    output {
+      file {
+         path => "/tmp/interception_pure.pcap"
+         codec => rubydebug
+      }
+    }
+    
+    

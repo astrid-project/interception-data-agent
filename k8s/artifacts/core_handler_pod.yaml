@@ -1,0 +1,100 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: interception-core-handler
+  namespace: interception
+  labels:
+          app: interception-core-handler
+spec:
+  containers:
+  - name: interception-core-handler
+    image: infocomsrl/interception-core-handler:0.1
+    env:
+    - name: LOGGERLEVEL
+      value: "DEBUG"
+    - name: INTERFACE
+      value: "eth0"
+    - name: INTERCEPTIONPATH
+      value: "./interceptions/"
+    - name: RESTSERVERADDRESS
+      value: "0.0.0.0"
+    - name: RESTSERVERPORT
+      value: "5003"
+    - name: POLYCUBEADDRESS
+      value: "127.0.0.1"
+    - name: POLYCUBEPORT
+      value: "9000"
+    - name: KAFKAADDRESS
+      value: "0.0.0.0"
+    - name: KAFKAPORT
+      value: "5002"
+    - name: KAFKATOPIC
+      value: "interception"
+    - name: LOGSTASHADDRESS
+      value: "127.0.0.1"
+    - name: LOGSTASHMSGPORT
+      value: "5959"
+    - name: LOGSTASHDATAPORT
+      value: "5960"
+    - name: LOGSTASHVERSION
+      value: "1"
+    - name: LOGVOIPPATH
+      value: "./"
+    - name: LOGVOIPFILENAME
+      value: "containerLogs.log"
+    - name: LOGVOIPREADINGTIME
+      value: "0.5"
+    - name: POLYCUBEISENABLED
+      value: "false"
+    - name: POLYCUBEISENABLED
+      value: "false"
+    - name: LIBPCAPISENABLED
+      value: "true"
+    - name: TCPSERVERADDRESS
+      value: ""
+    - name: TCPSERVERPORT
+      value: "0"
+
+    imagePullPolicy: IfNotPresent
+  - name: polycube
+    image: polycubenetwork/polycube:latest
+    command: ["/bin/bash", "-c"]
+    args: ["whoami; polycubed"]
+    volumeMounts:
+    - name: etc-localtime
+      mountPath: /etc/localtime
+      readOnly: true
+    - name: lib-modules
+      mountPath: /lib/modules
+      readOnly: true
+    - name: usr-src
+      mountPath: /usr/src
+      readOnly: true
+    - name: dev-net-tun
+      mountPath: /dev/net/tun
+      readOnly: true
+    securityContext:
+      capabilities:
+         add:
+           - all
+    imagePullPolicy: IfNotPresent
+  - name: lcp
+    image: astridproject/lcp:master
+    imagePullPolicy: IfNotPresent
+  restartPolicy: Never
+  nodeSelector:
+    name: compute03
+  volumes:
+  - name: lib-modules
+    hostPath:
+       path: /lib/modules
+  - name: usr-src
+    hostPath:
+       path: /usr/src
+  - name: etc-localtime
+    hostPath:
+       path: /etc/localtime
+  - name: dev-net-tun
+    hostPath:
+       path: /dev/net/tun
+
