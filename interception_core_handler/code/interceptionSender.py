@@ -144,7 +144,8 @@ class InterceptionSender( threading.Thread ) :
         interceptionCompletePath = str( self.interceptionFilePath ) \
             + "/" + str( self.interceptionFileName )
 
-        # TODO : try to read the file 3 times before rise an error
+        # TODO : try to read the file 150 times before rise an error
+        # 150 times for 2 seconds of sleep => 5 minutes of attempts
         isFileOpened = False
         openFileOperationCycle = 0
         while isFileOpened == False :
@@ -153,12 +154,13 @@ class InterceptionSender( threading.Thread ) :
                 isFileOpened = True
                 self.logger.debug( "File %s opened", str( interceptionCompletePath ) )
             except Exception as e :
-                if openFileOperationCycle == 3 :
+                if openFileOperationCycle == 150 :
                     self.logger.error( "Impossible to open %s", str( interceptionCompletePath ) )
                     return
                 openFileOperationCycle += 1
-                self.logger.debug( "Impossible to open %s, retry in 1 sec", str( interceptionCompletePath ) )
-                sleep( 1 )
+                if openFileOperationCycle % 10 :
+                    self.logger.debug( "Impossible to open %s, retry in 1 sec", str( interceptionCompletePath ) )
+                sleep( 2 )
 
         while self.is_active :
             # Continuously read interception file and send it to kafka broker or logstash

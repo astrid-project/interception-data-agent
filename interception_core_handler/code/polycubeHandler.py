@@ -6,6 +6,7 @@ info: guerino.lamanna@infocomgenova.it
 """
 
 import logging
+import os
 
 from polycubeAPI import PolycubeAPI
 
@@ -18,7 +19,7 @@ logger.setLevel( debugLevel )
 
 class PolycubeHandler() :
     def __init__( self, polycubeServerAddress = "127.0.0.1", polycubeServerPort = 9000,
-                    savedInterceptionPath = "./", savedInterceptionFileName = "capture.pcap" ) :
+                    savedInterceptionPath = "./", savedInterceptionFileName = "capture_file" ) :
         self.packetCaptureList = {}
         self.polycubeAPI = PolycubeAPI()
         self.savedInterceptionPath = savedInterceptionPath
@@ -45,10 +46,26 @@ class PolycubeHandler() :
                     dstAddress, dstPort, l4Proto )
 
         self.polycubeAPI.createPacketCapture( packetCaptureName )
-        self.polycubeAPI.dumpPathSetPacketCapture( packetCaptureName, self.savedInterceptionPath )
+        self.polycubeAPI.dumpPathSetPacketCapture( packetCaptureName, self.savedInterceptionPath, 
+                self.savedInterceptionFileName )
         self.polycubeAPI.attachPacketCapture( packetCaptureName, interfaceToAttachName )
+        polycubeFilter = ""
         if srcAddress :
-            self.polycubeAPI.srcIPSetPacketCapture( packetCaptureName )
+            polycubeFilter = "( ip src " + str( srcAddress )
+            # DON'T FILTER TRAFFIC FOR PORT
+            #if srcPort :
+            #    polycubeFilter += " && src port " + str( srcPort )
+            polycubeFilter += " ) "
+        if dstAddress :
+            if polycubeFilter != "" :
+                polycubeFilter += " || "
+            polycubeFilter += "( ip dst " + str( dstAddress )
+            # DON'T FILTER TRAFFIC FOR PORT
+            #if dstPort :
+            #    polycubeFilter += " && " + str( dstPort )
+            polycubeFilter += " ) "
+        if polycubeFilter != "" :
+            self.polycubeAPI.filterSetPacketCapture( packetCaptureName, polycubeFilter )
 
         self.packetCaptureList[ packetCaptureName ] = ( srcAddress, srcPort, dstAddress, dstPort, l4Proto )
         return True
@@ -66,7 +83,8 @@ class PolycubeHandler() :
     # TODO : set fileName in Polycube Packet Capture
     def interceptionSetFileName( self, fileName ) :
         if fileName != "" :
-            self.savedInterceptionFileName = fileName
+            # Remove ".pcap" extension
+            self.savedInterceptionFileName = os.path.splitext( fileName )[0]
             return True
         return False
     

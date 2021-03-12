@@ -49,7 +49,7 @@ class PolycubeAPI() :
         return False
 
     def srcIPSetPacketCapture( self, packetCaptureName, ipaddress = "0.0.0.0", mask = "24" ) :
-        srcIPSetPacketCaptureEndpoint = self.polycubeURL + packetCaptureName + "/filters/src"
+        srcIPSetPacketCaptureEndpoint = self.polycubeURL + "/packetcapture/" + packetCaptureName + "/filters/src"
         payload = "\"" + ipaddress + "/" + mask + "\""
         logger.debug( srcIPSetPacketCaptureEndpoint )
         logger.debug( payload )
@@ -59,7 +59,7 @@ class PolycubeAPI() :
         return False
     
     def dstIPSetPacketCapture( self, packetCaptureName, ipaddress = "0.0.0.0", mask = "24" ) :
-        dstIPSetPacketCaptureEndpoint = self.polycubeURL + packetCaptureName + "/filters/dst"
+        dstIPSetPacketCaptureEndpoint = self.polycubeURL + "/packetcapture/" + packetCaptureName + "/filters/dst"
         payload = ipaddress + "/" + mask
         logger.debug( dstIPSetPacketCaptureEndpoint )
         logger.debug( payload )
@@ -69,7 +69,7 @@ class PolycubeAPI() :
         return False
 
     def srcPortSetPacketCapture( self, packetCaptureName, port = 0 ) :
-        srcPortSetPacketCaptureEndpoint = self.polycubeURL + packetCaptureName + "/filters/sport"
+        srcPortSetPacketCaptureEndpoint = self.polycubeURL + "/packetcapture/" + packetCaptureName + "/filters/sport"
         payload = port
         logger.debug( srcPortSetPacketCaptureEndpoint )
         logger.debug( payload )
@@ -79,11 +79,21 @@ class PolycubeAPI() :
         return False
 
     def dstPortSetPacketCapture( self, packetCaptureName, port = 0 ) :
-        dstPortSetPacketCaptureEndpoint = self.polycubeURL + packetCaptureName + "/filters/dport"
+        dstPortSetPacketCaptureEndpoint = self.polycubeURL + "/packetcapture/" + packetCaptureName + "/filters/dport"
         payload = port
         logger.debug( dstPortSetPacketCaptureEndpoint )
         logger.debug( payload )
         response = requests.patch( dstPortSetPacketCaptureEndpoint, data = payload )
+        if response.status_code == 200 :
+            return True
+        return False
+
+    def filterSetPacketCapture( self, packetCaptureName, filterString = "" ) :
+        filterSetPacketCaptureEndpoint = self.polycubeURL + "/packetcapture/" + packetCaptureName + "/filter/"
+        payload = "\"" + filterString + "\""
+        logger.debug( filterSetPacketCaptureEndpoint )
+        logger.debug( filterString )
+        response = requests.patch( filterSetPacketCaptureEndpoint, data = payload )
         if response.status_code == 200 :
             return True
         return False
@@ -92,7 +102,7 @@ class PolycubeAPI() :
     parameters: "tcp" or "udp"
     """
     def l4ProtoSetPacketCapture( self, packetCaptureName, l4Proto = "" ) :
-        l4ProtoSetPacketCaptureEndpoint = self.polycubeURL + packetCaptureName + "/filters/l4proto"
+        l4ProtoSetPacketCaptureEndpoint = self.polycubeURL + "/packetcapture/" + packetCaptureName + "/filters/l4proto"
         payload = l4Proto
         logger.debug( l4ProtoSetPacketCaptureEndpoint )
         logger.debug( payload )
@@ -109,9 +119,9 @@ class PolycubeAPI() :
             return True
         return False
 
-    def dumpPathSetPacketCapture( self, packetCaptureName, dumpPath="./" ) :
-        dumpPathSetPacketCaptureEndpoint = self.polycubeURL + packetCaptureName + "/dump"
-        payload = "\"" + dumpPath + "\""
+    def dumpPathSetPacketCapture( self, packetCaptureName, dumpPath = "./", dumpFileName = "file" ) :
+        dumpPathSetPacketCaptureEndpoint = self.polycubeURL + "/packetcapture/" + packetCaptureName + "/dump"
+        payload = "\"" + dumpPath + "/" + dumpFileName + "\""
         logger.debug( dumpPathSetPacketCaptureEndpoint )
         logger.debug( payload )
         response = requests.patch( dumpPathSetPacketCaptureEndpoint, payload )

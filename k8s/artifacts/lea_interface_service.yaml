@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: lea-interface
+  namespace: interception
+spec:
+  selector:
+    app: lea-interface
+  clusterIP: None
+  ports:
+  - name: pcap
+    port: 5960
+    targetPort: 5960
+  - name: metadata
+    port: 5959
+    targetPort: 5959
+

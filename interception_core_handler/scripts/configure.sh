@@ -61,7 +61,7 @@ help() {
     echo ""
 }
 # load data from parameters
-while getopts ":hd:i:p:a:b:e:f:g:k:w:l:n:c:s:m:o:t:u:z:q:r" args; do
+while getopts ":hd:i:p:a:b:e:f:g:k:w:l:n:c:s:m:o:t:u:z:q:r:" args; do
     case ${args} in
         h)
             help

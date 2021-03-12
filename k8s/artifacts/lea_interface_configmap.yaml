@@ -13,7 +13,7 @@ data:
         - pipeline.id: bau
           path.config: "/usr/share/logstash/pipeline/logstash_for_call_information.conf"
         - pipeline.id: bau_and_warn
-          path.config: "/usr/share/logstash/pipepline/logstash_for_interception_saving.conf"
+          path.config: "/usr/share/logstash/pipeline/logstash_for_interception_saving.conf"
   logstash_for_call_information.conf: |
     # wait message from port 5959
     input {

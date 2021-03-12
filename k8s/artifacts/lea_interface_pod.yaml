@@ -19,10 +19,11 @@ spec:
     - name: KAFKAADDRESS
       value: "kafka-service.astrid-kube"
     - name: KAFKAPORT
-      value: "9092"
+      value: "0"
     - name: KAFKATOPIC
       value: "interception"
     imagePullPolicy: IfNotPresent
+
   - name: logstash
     image: docker.elastic.co/logstash/logstash:7.8.0
     volumeMounts:

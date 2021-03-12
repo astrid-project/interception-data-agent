@@ -15,7 +15,7 @@ spec:
     - name: INTERFACE
       value: "eth0"
     - name: INTERCEPTIONPATH
-      value: "./interceptions/"
+      value: "/root/interceptions/"
     - name: RESTSERVERADDRESS
       value: "0.0.0.0"
     - name: RESTSERVERPORT
@@ -31,7 +31,7 @@ spec:
     - name: KAFKATOPIC
       value: "interception"
     - name: LOGSTASHADDRESS
-      value: "127.0.0.1"
+      value: "lea-interface"
     - name: LOGSTASHMSGPORT
       value: "5959"
     - name: LOGSTASHDATAPORT
@@ -39,23 +39,25 @@ spec:
     - name: LOGSTASHVERSION
       value: "1"
     - name: LOGVOIPPATH
-      value: "./"
+      value: "./logs/"
     - name: LOGVOIPFILENAME
       value: "containerLogs.log"
     - name: LOGVOIPREADINGTIME
       value: "0.5"
     - name: POLYCUBEISENABLED
-      value: "false"
-    - name: POLYCUBEISENABLED
-      value: "false"
-    - name: LIBPCAPISENABLED
       value: "true"
+    - name: LIBPCAPISENABLED
+      value: "false"
     - name: TCPSERVERADDRESS
-      value: ""
+      value: "0.0.0.0"
     - name: TCPSERVERPORT
       value: "0"
+    volumeMounts:
+    - name: interception-data
+      mountPath: /root/interceptions
 
     imagePullPolicy: IfNotPresent
+
   - name: polycube
     image: polycubenetwork/polycube:latest
     command: ["/bin/bash", "-c"]
@@ -73,17 +75,22 @@ spec:
     - name: dev-net-tun
       mountPath: /dev/net/tun
       readOnly: true
+    - name: interception-data
+      mountPath: /root/interceptions
     securityContext:
+      runAsUser: 0
       capabilities:
          add:
            - all
     imagePullPolicy: IfNotPresent
+
   - name: lcp
     image: astridproject/lcp:master
     imagePullPolicy: IfNotPresent
+  
   restartPolicy: Never
   nodeSelector:
-    name: compute03
+    kernel: "5"
   volumes:
   - name: lib-modules
     hostPath:
@@ -97,4 +104,6 @@ spec:
   - name: dev-net-tun
     hostPath:
        path: /dev/net/tun
+  - name: interception-data
+    emptyDir: {}
 

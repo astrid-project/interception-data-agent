@@ -103,6 +103,7 @@ class RestServerHandler( BaseHTTPRequestHandler ) :
                     RestServerHandler.tcpServerPort
                 )
                 interceptionTask.start()
+                RestServerHandler.logger.debug( "add new interceptionTask = %s", interceptionName )
                 RestServerHandler.interceptionTasks[ interceptionName ] = interceptionTask
                 
         
@@ -125,7 +126,10 @@ class RestServerHandler( BaseHTTPRequestHandler ) :
             interceptionName = str( serviceID ) + str( providerID ) + str( userID )
             interceptionTask = RestServerHandler.interceptionTasks.pop( interceptionName, False )
             if interceptionTask :
+                RestServerHandler.logger.debug( "remove interceptionTask = %s", interceptionName )
                 interceptionTask.stop()
+            else :
+                RestServerHandler.logger.debug( "WARNING: interceptionTask = %s not found", interceptionName )
 
         self.wfile.write( bytes( json.dumps( response ), "utf-8" ) )
 

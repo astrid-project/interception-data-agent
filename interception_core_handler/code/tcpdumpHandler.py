@@ -117,7 +117,7 @@ class TcpdumpHandler() :
 
     def interceptionSetFileName( self, fileName ) :
         if fileName != "" :
-            self.savedInterceptionFileName = fileName
+            self.savedInterceptionFileName = fileName 
             return True
         return False
 

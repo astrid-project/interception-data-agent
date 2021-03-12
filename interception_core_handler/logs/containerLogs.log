@@ -234,3 +234,13 @@ INFO  [2020-03-04 11:20:02,875] org.whispersystems.textsecuregcm.auth.AccountAut
 INFO  [2020-03-04 16:30:40,463] org.whispersystems.textsecuregcm.auth.AccountAuthenticator: account for +306949193033 ispresent false
 62.74.10.171 - - [04/Mar/2020:16:30:40 +0000] "PUT /v1/directory/tokens HTTP/1.1" 401 49 "-" "okhttp/3.8.1" 22
 INFO  [2020-03-04 16:30:43,056] org.whispersystems.textsecuregcm.auth.AccountAuthenticator: account for +306949193033 ispresent false
+
+
+
+10.0.1.0 - - [30/Jan/2020:14:54:29 +0000] GET /v1/accounts/turn HTTP/1.1 200 168 - okhttp/3.8.1 72
+INFO  [2020-01-30 14:54:29,199] org.whispersystems.textsecuregcm.auth.AccountAuthenticator: account for +306944125708 ispresent true
+
+
+INFO  [2020-01-30 14:54:29,199] incoming call from +306944125708 to +306941234567
+
+INFO  [2020-01-30 14:54:29,199] start call from +306944125708 to +306941234567
