@@ -5,7 +5,7 @@ metadata:
   namespace: interception
 spec:
   selector:
-    app: core-handler
+    app: interception-core-handler
   clusterIP: None
   ports:
   - name: rest

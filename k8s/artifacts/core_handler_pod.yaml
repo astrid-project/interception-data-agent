@@ -86,6 +86,8 @@ spec:
 
   - name: lcp
     image: astridproject/lcp:master
+    command: ["/bin/sh", "-c"]
+    args: ["apk --update add curl; python3 main.py"]
     imagePullPolicy: IfNotPresent
   
   restartPolicy: Never

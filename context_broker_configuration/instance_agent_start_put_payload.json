@@ -1,0 +1,16 @@
+[
+	{
+		"id": "interception-core-agent@interception-core-handler",
+		"description": "Instance of Interception Core Agent",
+		"operations": {
+			"actions": [
+				{
+					"id": "start",
+					"userID":  "+306944125708",
+					"serviceProviderID": "2",
+					"serviceID": "3"
+				}
+			]
+		}
+	}
+]

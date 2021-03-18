@@ -16,7 +16,8 @@ Morover also steps to configure "Elastic software suite" in a basic testbed is p
 - [Installation](#installation)
 - [Configuration](#configuration)
 - [Usage](#usage)
-- [Elastic/Kafka configuration](#elastic/kafka-configuration)
+- [Elastic/Kafka configuration](#elastic/kafka configuration)
+- [Context Broker configuration and use](#context broker configuration an use)
 
 # Software description
 "Interception Data Agent" is composed by three main python softwares: 
@@ -83,3 +84,6 @@ It is a server to save VoIP interception as it is the LEA, just to check capture
 
 # Elastic/Kafka configuration
 - see ["elastic_kafka_configuration"](./elastic_kafka_configuration/README.md) directory for config file and explanation.
+
+# ContextBroker configuration and use
+- see ["context_broker_configuration"](./context_broker_configuration/README.md) Instruction to use ContextBroker for Interception managing

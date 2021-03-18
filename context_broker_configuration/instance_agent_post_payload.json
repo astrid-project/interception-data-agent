@@ -1,0 +1,19 @@
+[
+	{
+		"id": "interception-core-agent@interception-core-handler",
+		"agent_catalog_id": "interception-core-agent",
+		"exec_env_id": "interception-core-handler",
+		"description": "Instance of Interception Core Agent",
+		"status": "started",
+		"operations": {
+			"actions": [
+				{
+					"id": "start",
+					"userID":  "+306944125708",
+					"serviceProviderID": "2",
+					"serviceID": "3"
+				}
+			]
+		}
+	}
+]

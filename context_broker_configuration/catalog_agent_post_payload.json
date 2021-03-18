@@ -1,0 +1,21 @@
+[
+	{
+		"id": "interception-core-agent",
+		"actions": [
+			{
+				"id": "start",
+				"status": "started",
+				"config": {
+					"cmd": "curl localhost:5003/interceptionstart -d '{\"userID\":\"{userID}\", \"serviceProviderID\":\"{serviceProviderID}\",  \"serviceID\": \"{serviceID}\"}'"
+				}
+			},
+			{
+				"id": "stop",
+				"status": "stopped",
+				"config": {
+					"cmd": "curl localhost:5003/interceptionstop -d '{\"userID\":\"{userID}\", \"serviceProviderID\":\"{serviceProviderID}\",  \"serviceID\": \"{serviceID}\"}'"
+				}
+			}
+		]
+	}
+]

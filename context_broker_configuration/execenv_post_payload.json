@@ -1,0 +1,12 @@
+[
+  {
+    "lcp": {
+		"port": 4000
+    },
+    "id": "interception-core-handler",
+    "description": "Interception Core Handler",
+    "type_id": "container-docker",
+    "hostname": "interception-core-handler.interception",
+		"enabled": "Yes"
+  }
+]
