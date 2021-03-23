@@ -3,7 +3,9 @@ The "Interception Data Agent" is a software developed inside the Astrid Project.
 Its use is regarding to retrieve information about VoIP (call information and interception) following of a LEA (Law Enforcement Agency) request.
 
 The interception software makes use of SeVoC (VoIP) and Polycube PacketCapture.
-WARNING: PacketCapture is working on Linux Kernel version 5.4, othere ones are not guaranteed
+
+WARNING: PacketCapture is working on Linux Kernel version 5.4, other ones are not guaranteed
+
 Usually configuration is composed by "Interception Data Agent", "Security Controller", "Context Broker", "Polycube Packet Capture", "Elastic" software suite ("Logstash", "ElasticSearch") and "Kafka".
 
 If not diffent explained, all configuration steps, described below, referes to previous case.

@@ -1,0 +1,569 @@
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: interception
+  labels:
+    name: interception
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: lea-interface-configmap
+  namespace: interception
+data:
+  logstash.yml: |
+        config.reload:
+            automatic: true
+            interval: 60s
+        http.host: "0.0.0.0"
+  pipelines.yml: |
+        - pipeline.id: bau
+          path.config: "/usr/share/logstash/pipeline/logstash_for_call_information.conf"
+        - pipeline.id: bau_and_warn
+          path.config: "/usr/share/logstash/pipeline/logstash_for_interception_saving.conf"
+  logstash_for_call_information.conf: |
+    # wait message from port 5959
+    input {
+      tcp {
+        port => 5959
+        codec => json
+      }
+    }
+    
+    # write output on /tmp/ folder with a dinamyc name
+    output {
+      file {
+         path => "/tmp/interception_messages_%{userid}.json"
+         #codec => line { format => "%{message}" }
+         codec => rubydebug
+      }
+
+      elasticsearch {
+         index => "%{userid}-%{+YYYY.MM.dd}"
+      }
+    }
+    
+  logstash_for_interception_saving.conf: |
+    # receive message from 5960 port
+    input {
+      tcp {
+        port => 5960
+        codec => json
+      }
+    }
+    
+    # decode message and save interception in /tmp/ folder
+    filter {
+      ruby {
+         init => 'require "base64"'
+         code => 'event.set("data", Base64.decode64(event.get("data")));
+                  data = event.get("data");
+                  path = "/tmp/interception_data_";
+                  path.concat( event.get("interceptionfilename") );
+                  File.open(path, "ab") {|file| file.write( data ) };'
+      }
+    }
+    
+    # write all messages on /tmp/ folder, only for DEBUG purpose
+    output {
+      file {
+         path => "/tmp/interception_pure.pcap"
+         codec => rubydebug
+      }
+    }
+   
+
+  kibana.yml: |
+    server.name: kibana
+    server.host: "0.0.0.0"
+    elasticsearch.hosts: [ "http://localhost:9200" ]
+
+
+  elasticsearch.yml: |
+    node:
+      name: lea-interface
+      master: true
+    discovery.seed_hosts:
+      - localhost
+    cluster:
+      name: astrid
+      initial_master_nodes:
+        - lea-interface
+    path:
+      data: "${INSTALLATION_PATH}/data"
+      logs: "${INSTALLATION_PATH}/logs"
+    network.host: 0.0.0.0
+    transport.tcp.port: "${ELASTICSEARCH_TRANSPORT_TCP_PORT}"
+    http:
+      port: "${ELASTICSEARCH_PORT}"
+      cors:
+        enabled: true
+        allow-origin: "*"
+        allow-methods: OPTIONS, HEAD, GET, POST, PUT, DELETE
+        allow-headers: X-Requested-With, X-Auth-Token, Content-Type, Content-Length, kbn-version, Origin, Content-Type, Accept, Engaged-Auth-Token
+    xpack:
+      monitoring.collection.enabled: "${ELASTICSEARCH_MONITORING_ENABLED}"
+      security.enabled: false
+  log4j2.properties: |
+    status = error
+    logger.action.name = org.elasticsearch.action
+    logger.action.level = info
+    appender.console.type = Console
+    appender.console.name = console
+    appender.console.layout.type = PatternLayout
+    appender.console.layout.pattern = [%d{ISO8601}][%-5p][%-25c{1.}] [%node_name]%marker %m%n
+    appender.rolling.type = RollingFile
+    appender.rolling.name = rolling
+    appender.rolling.fileName = ${sys:es.logs.base_path}${sys:file.separator}${sys:es.logs.cluster_name}.log
+    appender.rolling.layout.type = PatternLayout
+    appender.rolling.layout.pattern = [%d{ISO8601}][%-5p][%-25c{1.}] [%node_name]%marker %.-10000m%n
+    appender.rolling.filePattern = ${sys:es.logs.base_path}${sys:file.separator}${sys:es.logs.cluster_name}-%d{yyyy-MM-dd}-%i.log.gz
+    appender.rolling.policies.type = Policies
+    appender.rolling.policies.time.type = TimeBasedTriggeringPolicy
+    appender.rolling.policies.time.interval = 1
+    appender.rolling.policies.time.modulate = true
+    appender.rolling.policies.size.type = SizeBasedTriggeringPolicy
+    appender.rolling.policies.size.size = 128MB
+    appender.rolling.strategy.type = DefaultRolloverStrategy
+    appender.rolling.strategy.fileIndex = nomax
+    appender.rolling.strategy.action.type = Delete
+    appender.rolling.strategy.action.basepath = ${sys:es.logs.base_path}
+    appender.rolling.strategy.action.condition.type = IfFileName
+    appender.rolling.strategy.action.condition.glob = ${sys:es.logs.cluster_name}-*
+    appender.rolling.strategy.action.condition.nested_condition.type = IfAccumulatedFileSize
+    appender.rolling.strategy.action.condition.nested_condition.exceeds = 2GB
+    rootLogger.level = info
+    rootLogger.appenderRef.console.ref = console
+    rootLogger.appenderRef.rolling.ref = rolling
+    appender.deprecation_rolling.type = RollingFile
+    appender.deprecation_rolling.name = deprecation_rolling
+    appender.deprecation_rolling.fileName = ${sys:es.logs.base_path}${sys:file.separator}${sys:es.logs.cluster_name}_deprecation.log
+    appender.deprecation_rolling.layout.type = PatternLayout
+    appender.deprecation_rolling.layout.pattern = [%d{ISO8601}][%-5p][%-25c{1.}] [%node_name]%marker %.-10000m%n
+    appender.deprecation_rolling.filePattern = ${sys:es.logs.base_path}${sys:file.separator}${sys:es.logs.cluster_name}_deprecation-%i.log.gz
+    appender.deprecation_rolling.policies.type = Policies
+    appender.deprecation_rolling.policies.size.type = SizeBasedTriggeringPolicy
+    appender.deprecation_rolling.policies.size.size = 1GB
+    appender.deprecation_rolling.strategy.type = DefaultRolloverStrategy
+    appender.deprecation_rolling.strategy.max = 4
+    logger.deprecation.name = org.elasticsearch.deprecation
+    logger.deprecation.level = info
+    logger.deprecation.appenderRef.deprecation_rolling.ref = deprecation_rolling
+    logger.deprecation.additivity = false
+    appender.index_search_slowlog_rolling.type = RollingFile
+    appender.index_search_slowlog_rolling.name = index_search_slowlog_rolling
+    appender.index_search_slowlog_rolling.fileName = ${sys:es.logs.base_path}${sys:file.separator}${sys:es.logs.cluster_name}_index_search_slowlog.log
+    appender.index_search_slowlog_rolling.layout.type = PatternLayout
+    appender.index_search_slowlog_rolling.layout.pattern = [%d{ISO8601}][%-5p][%-25c] [%node_name]%marker %.-10000m%n
+    appender.index_search_slowlog_rolling.filePattern = ${sys:es.logs.base_path}${sys:file.separator}${sys:es.logs.cluster_name}_index_search_slowlog-%d{yyyy-MM-dd}.log
+    appender.index_search_slowlog_rolling.policies.type = Policies
+    appender.index_search_slowlog_rolling.policies.time.type = TimeBasedTriggeringPolicy
+    appender.index_search_slowlog_rolling.policies.time.interval = 1
+    appender.index_search_slowlog_rolling.policies.time.modulate = true
+    logger.index_search_slowlog_rolling.name = index.search.slowlog
+    logger.index_search_slowlog_rolling.level = trace
+    logger.index_search_slowlog_rolling.appenderRef.index_search_slowlog_rolling.ref = index_search_slowlog_rolling
+    logger.index_search_slowlog_rolling.additivity = false
+    appender.index_indexing_slowlog_rolling.type = RollingFile
+    appender.index_indexing_slowlog_rolling.name = index_indexing_slowlog_rolling
+    appender.index_indexing_slowlog_rolling.fileName = ${sys:es.logs.base_path}${sys:file.separator}${sys:es.logs.cluster_name}_index_indexing_slowlog.log
+    appender.index_indexing_slowlog_rolling.layout.type = PatternLayout
+    appender.index_indexing_slowlog_rolling.layout.pattern = [%d{ISO8601}][%-5p][%-25c] [%node_name]%marker %.-10000m%n
+    appender.index_indexing_slowlog_rolling.filePattern = ${sys:es.logs.base_path}${sys:file.separator}${sys:es.logs.cluster_name}_index_indexing_slowlog-%d{yyyy-MM-dd}.log
+    appender.index_indexing_slowlog_rolling.policies.type = Policies
+    appender.index_indexing_slowlog_rolling.policies.time.type = TimeBasedTriggeringPolicy
+    appender.index_indexing_slowlog_rolling.policies.time.interval = 1
+    appender.index_indexing_slowlog_rolling.policies.time.modulate = true
+    logger.index_indexing_slowlog.name = index.indexing.slowlog.index
+    logger.index_indexing_slowlog.level = trace
+    logger.index_indexing_slowlog.appenderRef.index_indexing_slowlog_rolling.ref = index_indexing_slowlog_rolling
+    logger.index_indexing_slowlog.additivity = false
+    appender.audit_rolling.type = RollingFile
+    appender.audit_rolling.name = audit_rolling
+    appender.audit_rolling.fileName = ${sys:es.logs.base_path}${sys:file.separator}${sys:es.logs.cluster_name}_audit.log
+    appender.audit_rolling.layout.type = PatternLayout
+    appender.audit_rolling.layout.pattern = {\
+                    "@timestamp":"%d{ISO8601}"\
+                    %varsNotEmpty{, "node.name":"%enc{%map{node.name}}{JSON}"}\
+                    %varsNotEmpty{, "node.id":"%enc{%map{node.id}}{JSON}"}\
+                    %varsNotEmpty{, "host.name":"%enc{%map{host.name}}{JSON}"}\
+                    %varsNotEmpty{, "host.ip":"%enc{%map{host.ip}}{JSON}"}\
+                    %varsNotEmpty{, "event.type":"%enc{%map{event.type}}{JSON}"}\
+                    %varsNotEmpty{, "event.action":"%enc{%map{event.action}}{JSON}"}\
+                    %varsNotEmpty{, "user.name":"%enc{%map{user.name}}{JSON}"}\
+                    %varsNotEmpty{, "user.run_by.name":"%enc{%map{user.run_by.name}}{JSON}"}\
+                    %varsNotEmpty{, "user.run_as.name":"%enc{%map{user.run_as.name}}{JSON}"}\
+                    %varsNotEmpty{, "user.realm":"%enc{%map{user.realm}}{JSON}"}\
+                    %varsNotEmpty{, "user.run_by.realm":"%enc{%map{user.run_by.realm}}{JSON}"}\
+                    %varsNotEmpty{, "user.run_as.realm":"%enc{%map{user.run_as.realm}}{JSON}"}\
+                    %varsNotEmpty{, "user.roles":%map{user.roles}}\
+                    %varsNotEmpty{, "origin.type":"%enc{%map{origin.type}}{JSON}"}\
+                    %varsNotEmpty{, "origin.address":"%enc{%map{origin.address}}{JSON}"}\
+                    %varsNotEmpty{, "realm":"%enc{%map{realm}}{JSON}"}\
+                    %varsNotEmpty{, "url.path":"%enc{%map{url.path}}{JSON}"}\
+                    %varsNotEmpty{, "url.query":"%enc{%map{url.query}}{JSON}"}\
+                    %varsNotEmpty{, "request.method":"%enc{%map{request.method}}{JSON}"}\
+                    %varsNotEmpty{, "request.body":"%enc{%map{request.body}}{JSON}"}\
+                    %varsNotEmpty{, "request.id":"%enc{%map{request.id}}{JSON}"}\
+                    %varsNotEmpty{, "action":"%enc{%map{action}}{JSON}"}\
+                    %varsNotEmpty{, "request.name":"%enc{%map{request.name}}{JSON}"}\
+                    %varsNotEmpty{, "indices":%map{indices}}\
+                    %varsNotEmpty{, "opaque_id":"%enc{%map{opaque_id}}{JSON}"}\
+                    %varsNotEmpty{, "x_forwarded_for":"%enc{%map{x_forwarded_for}}{JSON}"}\
+                    %varsNotEmpty{, "transport.profile":"%enc{%map{transport.profile}}{JSON}"}\
+                    %varsNotEmpty{, "rule":"%enc{%map{rule}}{JSON}"}\
+                    %varsNotEmpty{, "event.category":"%enc{%map{event.category}}{JSON}"}\
+                    }%n
+    appender.audit_rolling.filePattern = ${sys:es.logs.base_path}${sys:file.separator}${sys:es.logs.cluster_name}_audit-%d{yyyy-MM-dd}.log
+    appender.audit_rolling.policies.type = Policies
+    appender.audit_rolling.policies.time.type = TimeBasedTriggeringPolicy
+    appender.audit_rolling.policies.time.interval = 1
+    appender.audit_rolling.policies.time.modulate = true
+    appender.deprecated_audit_rolling.type = RollingFile
+    appender.deprecated_audit_rolling.name = deprecated_audit_rolling
+    appender.deprecated_audit_rolling.fileName = ${sys:es.logs.base_path}${sys:file.separator}${sys:es.logs.cluster_name}_access.log
+    appender.deprecated_audit_rolling.layout.type = PatternLayout
+    appender.deprecated_audit_rolling.layout.pattern = [%d{ISO8601}] %m%n
+    appender.deprecated_audit_rolling.filePattern = ${sys:es.logs.base_path}${sys:file.separator}${sys:es.logs.cluster_name}_access-%d{yyyy-MM-dd}.log
+    appender.deprecated_audit_rolling.policies.type = Policies
+    appender.deprecated_audit_rolling.policies.time.type = TimeBasedTriggeringPolicy
+    appender.deprecated_audit_rolling.policies.time.interval = 1
+    appender.deprecated_audit_rolling.policies.time.modulate = true
+    logger.xpack_security_audit_logfile.name = org.elasticsearch.xpack.security.audit.logfile.LoggingAuditTrail
+    logger.xpack_security_audit_logfile.level = info
+    logger.xpack_security_audit_logfile.appenderRef.audit_rolling.ref = audit_rolling
+    logger.xpack_security_audit_logfile.additivity = false
+    logger.xpack_security_audit_deprecated_logfile.name = org.elasticsearch.xpack.security.audit.logfile.DeprecatedLoggingAuditTrail
+    logger.xpack_security_audit_deprecated_logfile.level = info
+    logger.xpack_security_audit_deprecated_logfile.appenderRef.deprecated_audit_rolling.ref = deprecated_audit_rolling
+    logger.xpack_security_audit_deprecated_logfile.additivity = false
+    logger.xmlsig.name = org.apache.xml.security.signature.XMLSignature
+    logger.xmlsig.level = info
+    logger.samlxml_decrypt.name = org.opensaml.xmlsec.encryption.support.Decrypter
+    logger.samlxml_decrypt.level = fatal
+    logger.saml2_decrypt.name = org.opensaml.saml.saml2.encryption.Decrypter
+    logger.saml2_decrypt.level = fatal
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: interception-request-handler
+  namespace: interception
+  labels:
+          app: interception-request-handler
+spec:
+  containers:
+  - name: interception-request-handler
+    image: infocomsrl/interception-request-handler:0.1
+    env:
+    - name: LOGGERLEVEL
+      value: "DEBUG"
+    - name: RESTSERVERADDRESS
+      value: "0.0.0.0"
+    - name: RESTSERVERPORT
+      value: "5004"
+    - name: KAFKAADDRESS
+      value: "kafka-service.astrid-kube"
+    - name: KAFKAPORT
+      value: "9092"
+    - name: KAFKATOPIC
+      value: "interception"
+    - name: CONTEXTBROKERADDRESS
+      value: "0.0.0.0"
+    - name: CONTEXTBROKERPORT
+      value: "0"
+    - name: CONTEXTBROKERUSER
+      value: "astrid"
+    - name: CONTEXTBROKERPASSWORD
+      value: "none"
+
+    imagePullPolicy: IfNotPresent
+  restartPolicy: Never
+  nodeSelector:
+    name: compute03
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: interception-core-handler
+  namespace: interception
+  labels:
+          app: interception-core-handler
+spec:
+  containers:
+  - name: interception-core-handler
+    image: infocomsrl/interception-core-handler:0.1
+    env:
+    - name: LOGGERLEVEL
+      value: "DEBUG"
+    - name: INTERFACE
+      value: "eth0"
+    - name: INTERCEPTIONPATH
+      value: "/root/interceptions/"
+    - name: RESTSERVERADDRESS
+      value: "0.0.0.0"
+    - name: RESTSERVERPORT
+      value: "5003"
+    - name: POLYCUBEADDRESS
+      value: "127.0.0.1"
+    - name: POLYCUBEPORT
+      value: "9000"
+    - name: KAFKAADDRESS
+      value: "0.0.0.0"
+    - name: KAFKAPORT
+      value: "5002"
+    - name: KAFKATOPIC
+      value: "interception"
+    - name: LOGSTASHADDRESS
+      value: "lea-interface"
+    - name: LOGSTASHMSGPORT
+      value: "5959"
+    - name: LOGSTASHDATAPORT
+      value: "5960"
+    - name: LOGSTASHVERSION
+      value: "1"
+    - name: LOGVOIPPATH
+      value: "./logs/"
+    - name: LOGVOIPFILENAME
+      value: "containerLogs.log"
+    - name: LOGVOIPREADINGTIME
+      value: "0.5"
+    - name: POLYCUBEISENABLED
+      value: "true"
+    - name: LIBPCAPISENABLED
+      value: "false"
+    - name: TCPSERVERADDRESS
+      value: "0.0.0.0"
+    - name: TCPSERVERPORT
+      value: "0"
+    volumeMounts:
+    - name: interception-data
+      mountPath: /root/interceptions
+
+    imagePullPolicy: IfNotPresent
+
+  - name: polycube
+    image: polycubenetwork/polycube:latest
+    command: ["/bin/bash", "-c"]
+    args: ["whoami; polycubed"]
+    volumeMounts:
+    - name: etc-localtime
+      mountPath: /etc/localtime
+      readOnly: true
+    - name: lib-modules
+      mountPath: /lib/modules
+      readOnly: true
+    - name: usr-src
+      mountPath: /usr/src
+      readOnly: true
+    - name: dev-net-tun
+      mountPath: /dev/net/tun
+      readOnly: true
+    - name: interception-data
+      mountPath: /root/interceptions
+    securityContext:
+      runAsUser: 0
+      capabilities:
+         add:
+           - all
+    imagePullPolicy: IfNotPresent
+
+  - name: lcp
+    image: astridproject/lcp:master
+    command: ["/bin/sh", "-c"]
+    args: ["apk --update add curl; python3 main.py"]
+    imagePullPolicy: IfNotPresent
+  
+  restartPolicy: Never
+  nodeSelector:
+    kernel: "5"
+  volumes:
+  - name: lib-modules
+    hostPath:
+       path: /lib/modules
+  - name: usr-src
+    hostPath:
+       path: /usr/src
+  - name: etc-localtime
+    hostPath:
+       path: /etc/localtime
+  - name: dev-net-tun
+    hostPath:
+       path: /dev/net/tun
+  - name: interception-data
+    emptyDir: {}
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: lea-interface
+  namespace: interception
+  labels:
+          app: lea-interface
+spec:
+  containers:
+  - name: lea-interface
+    image: infocomsrl/lea-interface:0.1
+    env:
+    - name: LOGGERLEVEL
+      value: "DEBUG"
+    - name: TCPSERVERADDRESS
+      value: "0.0.0.0"
+    - name: TCPSERVERPORT
+      value: "5004"
+    - name: KAFKAADDRESS
+      value: "kafka-service.astrid-kube"
+    - name: KAFKAPORT
+      value: "0"
+    - name: KAFKATOPIC
+      value: "interception"
+    imagePullPolicy: IfNotPresent
+
+  - name: logstash
+    image: docker.elastic.co/logstash/logstash:7.8.0
+    volumeMounts:
+    - name: pipelines
+      mountPath: /usr/share/logstash/pipeline
+    - name: config
+      mountPath: /usr/share/logstash/config/logstash.yml
+      subPath: logstash.yml
+    - name: pipelines-config
+      mountPath: /usr/share/logstash/config/pipelines.yml
+      subPath: pipelines.yml
+    securityContext:
+      runAsUser: 0
+    imagePullPolicy: IfNotPresent
+
+  - name: elasticsearch
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.8.0
+    securityContext:
+      runAsUser: 0
+    ports:
+    - containerPort: 9200   
+    env:
+      - name: INSTALLATION_PATH
+        value: /usr/share/elasticsearch
+      - name: ELASTICSEARCH_PORT
+        value: "9200"
+      - name: ELASTICSEARCH_MONITORING_ENABLED
+        value: "false"
+      - name: ELASTICSEARCH_TRANSPORT_TCP_PORT
+        value: "9300"
+    volumeMounts:
+      - name: elasticsearch-config
+        mountPath: /usr/share/elasticsearch/config/elasticsearch.yml
+        subPath: elasticsearch.yml
+        #      - name: elasticsearch-data
+        #        mountPath: /usr/share/elasticsearch/data/
+        #      - name: node
+        #        mountPath: /node
+
+  - name: kibana
+    image: docker.elastic.co/kibana/kibana:7.8.0
+    env:
+      - name: ELASTICSEARCH_URL
+        value: http://localhost:9200
+    ports:
+    - containerPort: 5601
+    volumeMounts:
+      - name: kibana-config
+        mountPath: /usr/share/kibana/config/kibana.yml
+        subPath: kibana.yml
+
+  restartPolicy: Never
+  nodeSelector:
+    name: compute03
+ 
+  volumes:
+  - name: pipelines
+    configMap:
+      name: lea-interface-configmap
+      items:
+        - key: logstash_for_call_information.conf
+          path: logstash_for_call_information.conf
+        - key: logstash_for_interception_saving.conf
+          path: logstash_for_interception_saving.conf
+  - name: config
+    configMap:
+      name: lea-interface-configmap
+      defaultMode: 0666
+      items:
+        - key: logstash.yml
+          path: logstash.yml
+  - name: pipelines-config
+    configMap:
+       name: lea-interface-configmap
+       defaultMode: 0666
+       items:
+        - key: pipelines.yml
+          path: pipelines.yml
+  - name: elasticsearch-config
+    configMap:
+       name: lea-interface-configmap
+       defaultMode: 0666
+       items:
+        - key: elasticsearch.yml
+          path: elasticsearch.yml
+  - name: kibana-config
+    configMap:
+       name: lea-interface-configmap
+       defaultMode: 0666
+       items:
+         - key: kibana.yml
+           path: kibana.yml
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: interception-request-handler
+  namespace: interception
+spec:
+  selector:
+    app: interception-request-handler
+  clusterIP: None
+  ports:
+  - name: rest
+    port: 5004
+    targetPort: 5004
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: interception-core-handler
+  namespace: interception
+spec:
+  selector:
+    app: interception-core-handler
+  clusterIP: None
+  ports:
+  - name: rest
+    port: 5003
+    targetPort: 5003
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: lea-interface
+  namespace: interception
+spec:
+  selector:
+    app: lea-interface
+  clusterIP: None
+  ports:
+  - name: pcap
+    port: 5960
+    targetPort: 5960
+  - name: metadata
+    port: 5959
+    targetPort: 5959
+  - name: kibana
+    port: 5601
+    targetPort: 5601
+
+---
