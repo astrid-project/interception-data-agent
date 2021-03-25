@@ -32,7 +32,8 @@ data:
       }
 
       elasticsearch {
-         index => "%{userid}-%{+YYYY.MM.dd}"
+         #index => "%{userid}-%{+YYYY.MM.dd}"
+         index => "interception"
       }
     }
     
