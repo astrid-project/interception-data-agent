@@ -14,4 +14,7 @@ spec:
   - name: metadata
     port: 5959
     targetPort: 5959
+  - name: kibana
+    port: 5601
+    targetPort: 5601
 

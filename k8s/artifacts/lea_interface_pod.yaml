@@ -38,10 +38,47 @@ spec:
     securityContext:
       runAsUser: 0
     imagePullPolicy: IfNotPresent
+
+  - name: elasticsearch
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.8.0
+    securityContext:
+      runAsUser: 0
+    ports:
+    - containerPort: 9200   
+    env:
+      - name: INSTALLATION_PATH
+        value: /usr/share/elasticsearch
+      - name: ELASTICSEARCH_PORT
+        value: "9200"
+      - name: ELASTICSEARCH_MONITORING_ENABLED
+        value: "false"
+      - name: ELASTICSEARCH_TRANSPORT_TCP_PORT
+        value: "9300"
+    volumeMounts:
+      - name: elasticsearch-config
+        mountPath: /usr/share/elasticsearch/config/elasticsearch.yml
+        subPath: elasticsearch.yml
+        #      - name: elasticsearch-data
+        #        mountPath: /usr/share/elasticsearch/data/
+        #      - name: node
+        #        mountPath: /node
+
+  - name: kibana
+    image: docker.elastic.co/kibana/kibana:7.8.0
+    env:
+      - name: ELASTICSEARCH_URL
+        value: http://localhost:9200
+    ports:
+    - containerPort: 5601
+    volumeMounts:
+      - name: kibana-config
+        mountPath: /usr/share/kibana/config/kibana.yml
+        subPath: kibana.yml
+
   restartPolicy: Never
   nodeSelector:
     name: compute03
-  
+ 
   volumes:
   - name: pipelines
     configMap:
@@ -65,3 +102,17 @@ spec:
        items:
         - key: pipelines.yml
           path: pipelines.yml
+  - name: elasticsearch-config
+    configMap:
+       name: lea-interface-configmap
+       defaultMode: 0666
+       items:
+        - key: elasticsearch.yml
+          path: elasticsearch.yml
+  - name: kibana-config
+    configMap:
+       name: lea-interface-configmap
+       defaultMode: 0666
+       items:
+         - key: kibana.yml
+           path: kibana.yml
