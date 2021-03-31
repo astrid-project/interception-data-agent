@@ -8,6 +8,8 @@ info: guerino.lamanna@infocomgenova.it
 from http.server import HTTPServer, BaseHTTPRequestHandler
 import socketserver
 import json
+import time
+import threading
 
 from interceptionTask import InterceptionTask
 from myLogger import MyLogger
@@ -81,7 +83,7 @@ class RestServerHandler( BaseHTTPRequestHandler ) :
             else :
                 serviceID = ""
 
-            interceptionName = str( serviceID ) + str( providerID ) + str( userID )
+            interceptionName = str( serviceID ) + "." +  str( providerID ) + "." +  str( userID )
             
             if RestServerHandler.interceptionTasks.get( interceptionName, False ) :
                 RestServerHandler.logger.debug( "interception task yet exist !" )
@@ -123,13 +125,30 @@ class RestServerHandler( BaseHTTPRequestHandler ) :
             else :
                 serviceID = ""
 
-            interceptionName = str( serviceID ) + str( providerID ) + str( userID )
+            threadList = threading.enumerate()
+            for elem in threadList :
+                RestServerHandler.logger.debug( "thread running: %s", elem.getName() )
+            RestServerHandler.logger.debug( "Elems in interceptionTasks: %d", 
+                    len( RestServerHandler.interceptionTasks ) )
+
+            interceptionName = str( serviceID ) + "." + str( providerID ) + "." + str( userID )
             interceptionTask = RestServerHandler.interceptionTasks.pop( interceptionName, False )
             if interceptionTask :
                 RestServerHandler.logger.debug( "remove interceptionTask = %s", interceptionName )
                 interceptionTask.stop()
+                interceptionTask.join()
+                while interceptionTask.isAlive() :
+                    RestServerHandler.logger.debug( "WARNING: interceptionTask = %s (%s) is still alive ", 
+                            interceptionName, interceptionTask.getName() )
+                    time.sleep( 1 ) 
+                RestServerHandler.logger.debug( "interceptionTask = %s (%s) now is ended",
+                        interceptionName, interceptionTask.getName() )
             else :
                 RestServerHandler.logger.debug( "WARNING: interceptionTask = %s not found", interceptionName )
+
+            threadList = threading.enumerate()
+            for elem in threadList :
+                RestServerHandler.logger.debug( "thread running: %s", elem.getName() )
 
         self.wfile.write( bytes( json.dumps( response ), "utf-8" ) )
 
@@ -170,9 +189,14 @@ class RestServer():
         return None
     
     def run( self ) :
-        with socketserver.TCPServer( ( self.restServerAddress, self.restServerPort ), self.handler ) as httpd:
+        #with socketserver.TCPServer( ( self.restServerAddress, self.restServerPort ), self.handler ) as httpd:
+        with HTTPServer( ( self.restServerAddress, self.restServerPort ), self.handler ) as httpd:
             self.logger.debug( "web server started" )
-            httpd.serve_forever()
+            try: 
+              httpd.serve_forever()
+            except KeyboardInterrupt :
+                pass
+            httpd.server_close()
         
         return None
 

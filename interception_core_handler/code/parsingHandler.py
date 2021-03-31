@@ -5,6 +5,9 @@ developed by @Infocom - 2020
 info: guerino.lamanna@infocomgenova.it
 """
 
+import time
+import calendar
+
 from enum import Enum
 from myLogger import MyLogger
 from IPy import IP
@@ -49,6 +52,7 @@ class ParsingHandler() :
         self.userID = userID
         self.providerID = providerID
         self.serviceID = serviceID
+        self.startEpochTime = time.time()
 
         # data used for parsing
         self.__readUserIP = ""
@@ -58,7 +62,6 @@ class ParsingHandler() :
         except Exception as e:
             self.logger.error( "error: impossible to open %s%s", self.filePath, self.fileName )
             self.logger.error( "error: %s", e )
-        
 
     """
     readFileAndGetEvent
@@ -79,18 +82,62 @@ class ParsingHandler() :
                 #self.logger.debug( "read line: %s", line )
 
                 # parse line and create and Event
+                # First event creation doesn't need data check
                 if self.__findOutChangeInterceptedIPParametersEvent( line ) :
                     returnValue = True
-                if self.__incomingCallEvent( line ) :
-                    returnValue = True
-                if self.__startCallEvent( line ) :
-                    returnValue = True
-                if self.__stopCallEvent( line ) :
-                    returnValue = True
-                if self.__rejectedCallEvent( line ) :
-                    returnValue = True
+
+                # all these events creations need for data check
+                if self.__outOfDataLineCheck( line ):
+                    if self.__incomingCallEvent( line ) :
+                        returnValue = True
+                    if self.__startCallEvent( line ) :
+                        returnValue = True
+                    if self.__stopCallEvent( line ) :
+                        returnValue = True
+                    if self.__rejectedCallEvent( line ) :
+                        returnValue = True
         
         return returnValue
+
+
+    """
+    __readEpochTimeFromString
+    ::
+    Read dateTime from a string like "ANYSTRING [04/Mar/2020:12:19:53 +0000] ANYSTRING"
+    It is usefull only for VoIP logfile
+    ::
+    return the Epoch time, -1 if error
+    """
+    def __readEpochTimeFromString( self, dt ):
+        epochTime = -1
+        try:
+            timeString = dt.split('[')[1].split(']')[0]
+            utcTime = time.strptime( timeString, "%d/%b/%Y:%H:%M:%S %z" )
+            epochTime = calendar.timegm( utcTime )
+        except Exception as e:
+            self.logger.error( "error: %s", e )
+
+        return epochTime
+
+
+    """
+    __outOfDateLineCheck
+    ::
+    Check if the date inside the line has a date after or before the starting time of the software
+    ::
+    It returns True if the line date is next of starting time. Otherwise it returns False
+    """
+    def __outOfDataLineCheck( self, line = "" ) :
+        if line != "" :
+            # Check if data is out of date 
+            epochTimeFromString = self.__readEpochTimeFromString( line )
+            if epochTimeFromString - self.startEpochTime < 0 :
+                self.logger.debug( "Out-of-date ( start: %d, value: %d ) data: %s", 
+                        self.startEpochTime, epochTimeFromString, line )
+                return False
+            return True
+        return False
+
 
     """
     findOutchangeInterceptedIPParametersEvent
@@ -153,6 +200,7 @@ class ParsingHandler() :
             elems = line.split()
             userFrom = ""
             userTo = ""
+
             # check if "incoming call" is the line
             if "incoming call" in line:
                 # check userID of calling user

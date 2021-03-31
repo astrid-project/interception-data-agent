@@ -70,14 +70,15 @@ class InterceptionSender( threading.Thread ) :
             self.logger.debug( "Logstash server : %s : %s",
                 str( self.logstashAddress ), str( self.logstashPort ) )
             self.sendToLogstash = logging.getLogger( "interception" )
-            self.sendToLogstash.setLevel( logging.INFO )
-            self.sendToLogstash.addHandler(
-                    logstash.TCPLogstashHandler(
-                        host = self.logstashAddress,
-                        port = self.logstashPort,
-                        version = self.logstashMessageVersion
-                    )
-                )
+            if len( self.sendToLogstash.handlers ) == 0 :
+               self.sendToLogstash.setLevel( logging.INFO )
+               self.sendToLogstash.addHandler(
+                       logstash.TCPLogstashHandler(
+                           host = self.logstashAddress,
+                           port = self.logstashPort,
+                           version = self.logstashMessageVersion
+                       )
+                   )
             self.__sender = self.__logstashSender
         elif self.senderTool == SenderTool.tcpstream :
             self.logger.debug( "Tcp stream sender : tcp server : %s:%s", \
@@ -148,7 +149,7 @@ class InterceptionSender( threading.Thread ) :
         # 150 times for 2 seconds of sleep => 5 minutes of attempts
         isFileOpened = False
         openFileOperationCycle = 0
-        while isFileOpened == False :
+        while isFileOpened == False and self.is_active :
             try :
                 file = open( interceptionCompletePath, "rb" )
                 isFileOpened = True
@@ -159,7 +160,7 @@ class InterceptionSender( threading.Thread ) :
                     return
                 openFileOperationCycle += 1
                 if openFileOperationCycle % 10 :
-                    self.logger.debug( "Impossible to open %s, retry in 1 sec", str( interceptionCompletePath ) )
+                    self.logger.debug( "Impossible to open %s, retry in 2 sec", str( interceptionCompletePath ) )
                 sleep( 2 )
 
         while self.is_active :

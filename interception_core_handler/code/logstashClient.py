@@ -75,10 +75,11 @@ class LogstashClient() :
         self.port = logstashPort
         self.version = logstashVersion
         self.sender = logging.getLogger( "interception logger" )
-        self.sender.setLevel( logging.INFO )
-        self.sender.addHandler( logstash.TCPLogstashHandler( host = self.address, 
-                                                          port = self.port, 
-                                                          version = self.version ) )
+        if len( self.sender.handlers ) == 0 :
+           self.sender.setLevel( logging.INFO )
+           self.sender.addHandler( logstash.TCPLogstashHandler( host = self.address, 
+                                                             port = self.port, 
+                                                             version = self.version ) )
 
     """
     sendMessage

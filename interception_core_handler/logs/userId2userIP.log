@@ -1,34 +1,34 @@
 62.74.14.183 - - [30/Jan/2020:14:54:29 +0000] "GET /v1/accounts/turn HTTP/1.1" 200 168 "-" "okhttp/3.8.1" 72
-INFO  [2020-01-30 14:54:29,199] org.whispersystems.textsecuregcm.auth.AccountAuthenticator: account for +306944125708 ispresent true
+INFO  [30/Jan/2020:14:54:29 +0000] org.whispersystems.textsecuregcm.auth.AccountAuthenticator: account for +306944125708 ispresent true
 62.74.14.183 - - [30/Jan/2020:14:54:29 +0000] "GET /v1/accounts/turn HTTP/1.1" 200 168 "-" "okhttp/3.8.1" 72
-INFO  [2020-01-30 14:54:29,199] org.whispersystems.textsecuregcm.auth.AccountAuthenticator: account for +306944125708 ispresent true
+INFO  [30/Jan/2020:14:54:29 +0000] org.whispersystems.textsecuregcm.auth.AccountAuthenticator: account for +306944125708 ispresent true
 
 
-INFO  [2020-01-30 14:54:29,199] incoming call from +306944125708 to +306941234567
+INFO  [30/Jan/2020:14:54:29 +0000] incoming call from +306944125708 to +306941234567
 
-INFO  [2020-01-30 14:54:29,199] start call from +306944125708 to +306941234567
+INFO  [30/Jan/2020:14:54:29 +0000] start call from +306944125708 to +306941234567
 
-INFO  [2020-01-30 14:54:29,199] stop call from +306944125708 to +306941234567
+INFO  [30/Jan/2020:14:54:29 +0000] stop call from +306944125708 to +306941234567
 
-INFO  [2020-01-30 14:54:29,199] incoming call from +306944125708 to +306941234567
-INFO  [2020-01-30 14:54:29,199] rejected call from +306944125708 to +306941234567
+INFO  [30/Jan/2020:14:54:29 +0000] incoming call from +306944125708 to +306941234567
+INFO  [30/Jan/2020:14:54:29 +0000] rejected call from +306944125708 to +306941234567
 
-INFO  [2020-01-30 14:54:29,199] incoming call +306941234567 to +306944125708
-INFO  [2020-01-30 14:54:29,199] rejected call +306941234567 to +306944125708
+INFO  [30/Jan/2020:14:54:29 +0000] incoming call +306941234567 to +306944125708
+INFO  [30/Jan/2020:14:54:29 +0000] rejected call +306941234567 to +306944125708
 
 10.0.1.0 - - [30/Jan/2020:14:54:29 +0000] GET /v1/accounts/turn HTTP/1.1 200 168 - okhttp/3.8.1 72
-INFO  [2020-01-30 14:54:29,199] org.whispersystems.textsecuregcm.auth.AccountAuthenticator: account for +306944125708 ispresent true
+INFO  [30/Jan/2020:14:54:29 +0000] org.whispersystems.textsecuregcm.auth.AccountAuthenticator: account for +306944125708 ispresent true
 
 
-INFO  [2020-01-30 14:54:29,199] incoming call from +306944125708 to +306941234567
+INFO  [30/Jan/2020:14:54:29 +0000] incoming call from +306944125708 to +306941234567
 
-INFO  [2020-01-30 14:54:29,199] start call from +306944125708 to +306941234567
+INFO  [30/Jan/2020:14:54:29 +0000] start call from +306944125708 to +306941234567
 
-INFO  [2020-01-30 14:54:29,199] stop call from +306944125708 to +306941234567
+INFO  [30/Jan/2020:14:54:29 +0000] stop call from +306944125708 to +306941234567
 
-INFO  [2020-01-30 14:54:29,199] incoming call from +306944125708 to +306941234567
-INFO  [2020-01-30 14:54:29,199] rejected call from +306944125708 to +306941234567
+INFO  [30/Jan/2020:14:54:29 +0000] incoming call from +306944125708 to +306941234567
+INFO  [30/Jan/2020:14:54:29 +0000] rejected call from +306944125708 to +306941234567
 
-INFO  [2020-01-30 14:54:29,199] incoming call +306941234567 to +306944125708
+INFO  [30/Jan/2020:14:54:29 +0000] incoming call +306941234567 to +306944125708
 
-INFO  [2020-01-30 14:54:29,199] rejected call +306941234567 to +306944125708
+INFO  [30/Jan/2020:14:54:29 +0000] rejected call +306941234567 to +306944125708

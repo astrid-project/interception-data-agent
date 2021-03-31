@@ -85,7 +85,7 @@ class KafkaClient( threading.Thread ) :
                     continue
 
                 if action == "start" :
-                    interceptionName = str( serviceID ) + str( providerID ) + str( userID )
+                    interceptionName = str( serviceID ) + "." + str( providerID ) + "." + str( userID )
             
                     if self.interceptionTasks.get( interceptionName, False ) :
                         self.logger.debug( "interception task yet exist !" )
@@ -109,10 +109,11 @@ class KafkaClient( threading.Thread ) :
                         self.interceptionTasks[ interceptionName ] = interceptionTask
 
                 if action == "stop" :
-                    interceptionName = str( serviceID ) + str( providerID ) + str( userID )
+                    interceptionName = str( serviceID ) + "." + str( providerID ) + "." + str( userID )
                     interceptionTask = self.interceptionTasks.pop( interceptionName, False )
                     if interceptionTask :
                         interceptionTask.stop()
+                        interceptionTask.join()
                         
                 
 

@@ -17,10 +17,11 @@ class MyLogger() :
     def getLogger( self, logName = __name__ ) :
         if MyLogger.logLevel :
             logger = logging.getLogger( logName )
-            logHandler = logging.StreamHandler()
-            logFormat = logging.Formatter( MyLogger.formatter )
-            logHandler.setFormatter( logFormat )
-            logger.addHandler( logHandler )
-            logger.setLevel( MyLogger.logLevel )
+            if len( logger.handlers ) == 0 :
+               logHandler = logging.StreamHandler()
+               logFormat = logging.Formatter( MyLogger.formatter )
+               logHandler.setFormatter( logFormat )
+               logger.addHandler( logHandler )
+               logger.setLevel( MyLogger.logLevel )
             return logger
         return ""

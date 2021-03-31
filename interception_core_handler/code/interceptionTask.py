@@ -30,7 +30,7 @@ class InterceptionTask( threading.Thread ):
         threading.Thread.__init__( self )
         myLogger = MyLogger()
         self.logger = myLogger.getLogger( __name__ )
-        threading.Thread.__init__( self )
+        #threading.Thread.__init__( self )
         self.is_active = True
         self.interceptionInterfaceName = interceptionInterfaceName
         self.logVoIPFilePath = logVoIPFilePath
@@ -238,7 +238,9 @@ class InterceptionTask( threading.Thread ):
 
                             senderTask = self.interceptionSenders.pop( taskName, False )
                             if senderTask :
+                                self.logger.debug( "stop the sender task" )
                                 senderTask.stop()
+                                senderTask.join()
                             
                             self.logger.debug( "result of interception tool stop (1): %s", str( boolResult ) )
                         else :
@@ -296,10 +298,12 @@ class InterceptionTask( threading.Thread ):
         # stop all interception senders
         for k, v in self.interceptionSenders.items() :
             v.stop()
+            v.join()
 
         self.logger.debug( "result of interception tool stop (2) : %s", str( boolResult ) )
 
     def stop( self ):
+        self.logger.debug( "name of myself : Task = %s", self.getName() )
         self.is_active = False
 
 
