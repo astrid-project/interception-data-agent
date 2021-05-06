@@ -376,6 +376,31 @@ spec:
     image: astridproject/lcp:master
     command: ["/bin/sh", "-c"]
     args: ["apk --update add curl; python3 main.py"]
+    env:
+      - name: LCP_HOST
+        value: "0.0.0.0"
+      - name: LCP_PORT
+        value: "4000"
+      - name: LCP_HTTPS
+        value: "false"
+      - name: LCP_AUTH_ENABLED
+        value: "true"
+      - name: LCP_AUTH_HEADER_PREFIX
+        value: "ASTRID"
+      - name: LCP_AUTH_SECRET_KEY
+        value: "astrid-secret-key"
+      - name: LCP_ELASTIC_APM_ENABLED
+        value: "false"
+      - name: LCP_ELASTIC_APM_SERVER
+        value: "http://localhost:8200"
+      - name: LCP_POLYCUBE_HOST
+        value: "localhost"
+      - name: LCP_POLYCUBE_PORT
+        value: "9000"
+      - name: LCP_POLYCUBE_TIMEOUT
+        value: "20s"
+      - name: LCP_LOG_CONFIG
+        value: "log.yaml"
     imagePullPolicy: IfNotPresent
   
   restartPolicy: Never
