@@ -282,8 +282,8 @@ spec:
 
     imagePullPolicy: IfNotPresent
   restartPolicy: Never
-  nodeSelector:
-    name: compute03
+  #nodeSelector:
+  #  name: compute03
 
 ---
 apiVersion: v1
@@ -404,8 +404,8 @@ spec:
     imagePullPolicy: IfNotPresent
   
   restartPolicy: Never
-  nodeSelector:
-    kernel: "5"
+  #nodeSelector:
+  #  kernel: "5"
   volumes:
   - name: lib-modules
     hostPath:
@@ -501,8 +501,8 @@ spec:
         subPath: kibana.yml
 
   restartPolicy: Never
-  nodeSelector:
-    name: compute03
+  #nodeSelector:
+  #  name: compute03
  
   volumes:
   - name: pipelines
