@@ -76,8 +76,8 @@ spec:
         subPath: kibana.yml
 
   restartPolicy: Never
-  nodeSelector:
-    name: compute03
+  #nodeSelector:
+  #  name: compute03
  
   volumes:
   - name: pipelines
